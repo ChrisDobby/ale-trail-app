@@ -1,38 +1,28 @@
-import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
-import { useRouteData } from "remix";
-
-import stylesUrl from "../styles/index.css";
+import type { MetaFunction, LinksFunction } from "remix";
+import { Link } from "remix";
 
 export let meta: MetaFunction = () => {
-  return {
-    title: "Remix Starter",
-    description: "Welcome to remix!",
-  };
-};
-
-export let links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: stylesUrl }];
-};
-
-export let loader: LoaderFunction = async () => {
-  return { message: "this is awesome 😎" };
+    return {
+        title: "Ale trail planner",
+        description: "Welcome to the ale trail planner",
+    };
 };
 
 export default function Index() {
-  let data = useRouteData();
-
-  return (
-    <div style={{ textAlign: "center", padding: 20 }}>
-      <h2>Welcome to Remix!</h2>
-      <p>
-        <a href="/two">Here's another page</a>
-      </p>
-      <p>Message from the loader: {data.message}</p>
-      <p>
-        <a href="https://github.com/ascorbic/remix-on-netlify/">
-          remix-on-netlify repo
-        </a>
-      </p>
-    </div>
-  );
+    return (
+        <div className="text-center p-5">
+            <h1 className="text-blue-700 text-3xl">The ale trail planner</h1>
+            <h2 className="text-xl">Coming soon...</h2>
+            <p>
+                <Link className="underline text-blue-400 text-sm mb-2 mt-2" to="/two">
+                    Here's another page
+                </Link>
+            </p>
+            <p>
+                <a className="underline text-blue-400 text-sm" href="https://github.com/chrisdobby/ale-trail-app">
+                    ale-trail-app repo
+                </a>
+            </p>
+        </div>
+    );
 }

@@ -5,3 +5,6 @@ node_modules
 /public/build
 /.netlify
 .env
+/.vscode
+yarn-error.log
+/app/styles
