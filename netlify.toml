@@ -1,0 +1,11 @@
+[dev]
+command="npm run dev"
+targetPort=3000
+publish="public"
+framework="#custom"
+
+[functions]
+    external_node_modules = ["@remix-run/react", "react", "react-dom"]
+
+[template.environment]
+    REMIX_TOKEN = "Replace this with your licence key from remix.run"
