@@ -8,7 +8,8 @@
     "build:css": "postcss styles --base styles --dir app/styles --env production",
     "build": "yarn build:css && remix build",
     "dev": "yarn build:css && concurrently \"remix run\" \"yarn watch:css\"",
-    "start": "remix-serve netlify/functions/server/build"
+    "start": "remix-serve netlify/functions/server/build",
+    "lint": "eslint"
   },
   "dependencies": {
     "@remix-run/react": "^0.17.3",
@@ -30,6 +31,8 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
+    "husky": "^7.0.0",
+    "lint-staged": "^11.0.0",
     "postcss": "^8.3.5",
     "postcss-cli": "^8.3.1",
     "prettier": "^2.3.2",

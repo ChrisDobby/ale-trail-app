@@ -1,0 +1,9 @@
+{
+    "linters": {
+        "**/*.+(ts|tsx)": [
+            "prettier --write",
+            "git add",
+            "eslint -c eslintrc.json"
+        ]
+    }
+}
