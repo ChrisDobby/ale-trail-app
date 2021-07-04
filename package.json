@@ -9,7 +9,9 @@
     "build": "yarn build:css && remix build",
     "dev": "yarn build:css && concurrently \"remix run\" \"yarn watch:css\"",
     "start": "remix-serve netlify/functions/server/build",
-    "lint": "eslint"
+    "format": "prettier --write",
+    "lint": "eslint",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@remix-run/react": "^0.17.3",
@@ -35,7 +37,8 @@
     "postcss-cli": "^8.3.1",
     "prettier": "^2.3.2",
     "tailwindcss": "^2.2.4",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "husky": "^7.0.0"
   },
   "engines": {
     "node": ">=14"
