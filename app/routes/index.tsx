@@ -1,5 +1,5 @@
-import type { MetaFunction, LinksFunction } from "remix";
-import { Link } from "remix";
+import type { MetaFunction } from "remix";
+import { Typography } from "@material-ui/core";
 
 export let meta: MetaFunction = () => {
     return {
@@ -10,19 +10,16 @@ export let meta: MetaFunction = () => {
 
 export default function Index() {
     return (
-        <div className="text-center p-5">
-            <h1 className="text-blue-700 text-3xl">The ale trail planner</h1>
-            <h2 className="text-xl">Coming soon...</h2>
+        <main style={{ textAlign: "center", padding: "2rem" }}>
+            <Typography variant="h4" component="h1">
+                The ale trail planner
+            </Typography>
+            <Typography variant="h5" component="h2">
+                Coming soon...
+            </Typography>
             <p>
-                <Link className="underline text-blue-400 text-sm mb-2 mt-2" to="/two">
-                    Here's another page
-                </Link>
+                <a href="https://github.com/chrisdobby/ale-trail-app">ale-trail-app repo</a>
             </p>
-            <p>
-                <a className="underline text-blue-400 text-sm" href="https://github.com/chrisdobby/ale-trail-app">
-                    ale-trail-app repo
-                </a>
-            </p>
-        </div>
+        </main>
     );
 }

@@ -1,15 +1,13 @@
 import type { LinksFunction, LoaderFunction } from "remix";
 import { Meta, Links, Scripts, LiveReload } from "remix";
 import { Outlet } from "react-router-dom";
+import { useMediaQuery, createMuiTheme, ThemeProvider, CssBaseline } from "@material-ui/core";
+import { useMemo } from "react";
 
 import stylesUrl from "./styles/global.css";
-import appStylesUrl from "./styles/app.css";
 
 export let links: LinksFunction = () => {
-    return [
-        { rel: "stylesheet", href: stylesUrl },
-        { rel: "stylesheet", href: appStylesUrl },
-    ];
+    return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
 export let loader: LoaderFunction = async () => {
@@ -23,6 +21,10 @@ function Document({ children }: { children: React.ReactNode }) {
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.png" type="image/png" />
+                <link
+                    rel="stylesheet"
+                    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+                />
                 <Meta />
                 <Links />
             </head>
@@ -37,9 +39,24 @@ function Document({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+    const theme = useMemo(
+        () =>
+            createMuiTheme({
+                palette: {
+                    type: prefersDarkMode ? "dark" : "light",
+                },
+            }),
+        [prefersDarkMode],
+    );
+
     return (
         <Document>
-            <Outlet />
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Outlet />
+            </ThemeProvider>
         </Document>
     );
 }
