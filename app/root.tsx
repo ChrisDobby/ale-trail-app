@@ -1,8 +1,7 @@
 import type { LinksFunction, LoaderFunction } from "remix";
 import { Meta, Links, Scripts, LiveReload } from "remix";
 import { Outlet } from "react-router-dom";
-import { useMediaQuery, createMuiTheme, ThemeProvider, CssBaseline } from "@material-ui/core";
-import { useMemo } from "react";
+import { AppThemeProvider } from "./context/appThemeContext";
 
 import stylesUrl from "./styles/global.css";
 
@@ -39,24 +38,11 @@ function Document({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
-    const theme = useMemo(
-        () =>
-            createMuiTheme({
-                palette: {
-                    type: prefersDarkMode ? "dark" : "light",
-                },
-            }),
-        [prefersDarkMode],
-    );
-
     return (
         <Document>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
+            <AppThemeProvider>
                 <Outlet />
-            </ThemeProvider>
+            </AppThemeProvider>
         </Document>
     );
 }
