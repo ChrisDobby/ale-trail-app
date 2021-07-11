@@ -1,37 +1,31 @@
-import type { MetaFunction } from "remix";
-import { Typography, Link, makeStyles } from "@material-ui/core";
+import { LoaderFunction, MetaFunction, useRouteData } from "remix";
 import { Header } from "../components/header";
+import ComingSoon from "../components/comingSoon";
+import { tokenCookie } from "../cookies";
+import { getAuth, getAuthHeader, getUser } from "../authentication";
 
-export let meta: MetaFunction = () => {
+export const loader: LoaderFunction = ({ request }) => {
+    const auth = getAuth(tokenCookie, request);
+    if (auth) {
+        return getUser(getAuthHeader(auth));
+    }
+
+    return null;
+};
+
+export const meta: MetaFunction = () => {
     return {
         title: "Ale trail planner",
         description: "Welcome to the ale trail planner",
     };
 };
 
-const useStyles = makeStyles(() => ({
-    app: {},
-    main: {
-        textAlign: "center",
-        padding: "2rem",
-    },
-}));
-
 export default function Index() {
-    const classes = useStyles();
-
+    const user = useRouteData();
     return (
-        <div className={classes.app}>
-            <Header />
-            <main className={classes.main}>
-                <Typography variant="h4" component="h1">
-                    The ale trail planner
-                </Typography>
-                <Typography variant="h5" component="h2">
-                    Coming soon...
-                </Typography>
-                <Link href="https://github.com/chrisdobby/ale-trail-app">ale-trail-app repo</Link>
-            </main>
-        </div>
+        <>
+            <Header userProfile={user} />
+            <ComingSoon />
+        </>
     );
 }
