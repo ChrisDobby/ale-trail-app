@@ -95,7 +95,7 @@ export async function secure({ tokenCookie, getSession, commitSession, args }: S
         const { pathname } = new URL(request.url);
         const session = await getSession(request.headers.get("Cookie"));
         const state = uuidv4();
-        session.set("lastRequestPath", pathname ?? "/");
+        session.set("lastRequestPath", `${pathname}/` ?? "/");
         session.set("authState", state);
 
         const authUrl = `${AUTH_URL}/authorize?scope=offline_access openid profile&response_type=code&client_id=${AUTH_CLIENT_ID}&redirect_uri=${getRedirectUri(
