@@ -14,6 +14,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     const session = await getSession(request.headers.get("Cookie"));
     if (session.get("authState") === state) {
+        console.log("********* redirecting **********");
+        console.log(session.get("lastRequestPath"));
         return redirect(session.get("lastRequestPath") || "/", {
             headers: { "Set-Cookie": tokenCookie.serialize(await retrieveToken({ request, code })) },
         });
