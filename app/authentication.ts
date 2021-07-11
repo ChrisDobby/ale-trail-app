@@ -69,6 +69,8 @@ export function getAuthHeader(auth: Auth) {
 }
 
 export function getUser(headers: HeadersInit) {
+    console.log("***** getUser *******");
+    console.log(AUTH_URL);
     return fetch(`${AUTH_URL}/userinfo`, { headers });
 }
 
@@ -84,8 +86,11 @@ export function getAuth(tokenCookie: Cookie, request: Request): Auth | null {
 }
 
 export async function secure({ tokenCookie, getSession, commitSession, args }: SecureOptions, loader: LoaderFunction) {
+    console.log("******* secure ************");
+    console.log(args);
     const { request } = args;
     let auth = getAuth(tokenCookie, request);
+    console.log(auth);
     if (!auth) {
         const { pathname } = new URL(request.url);
         const session = await getSession(request.headers.get("Cookie"));
