@@ -3,9 +3,6 @@ import type { Cookie, Session, LoaderFunction, AppLoadContext } from "remix";
 import { v4 as uuidv4 } from "uuid";
 import { tokenCookie } from "./cookies";
 
-// const AUTH_CLIENT_ID = "uxfXvUb0ODasu9TCb1F7Qn138pBl2lHb";
-// const AUTH_CLIENT_SECRET = "DcG3DlUsJ0v46tn9Cn2FtxuUDy49sWmJFLQSBMZNphPvHEBjmwBS1sfRyI-pyntW";
-// const AUTH_URL = "https://dev-chrisdobby.eu.auth0.com";
 const AUTH_CLIENT_ID = process.env.AUTH_CLIENT_ID || "";
 const AUTH_CLIENT_SECRET = process.env.AUTH_CLIENT_SECRET || "";
 const AUTH_URL = process.env.AUTH_URL || "";
