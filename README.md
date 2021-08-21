@@ -14,7 +14,7 @@ Set the environment variable `REMIX_TOKEN` to your licence key from the Remix da
 To run the Remix dev server, run:
 
 ```
-$ yarn run dev
+$ yarn dev
 
 ```
 
