@@ -1,5 +1,7 @@
-import { createTheme, useMediaQuery, ThemeProvider, CssBaseline, PaletteType } from "@material-ui/core";
+import { createTheme, useMediaQuery, ThemeProvider, CssBaseline, PaletteMode } from "@mui/material";
 import { createContext, ReactNode, ReactNodeArray, useEffect, useMemo, useState } from "react";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
 
 const THEME_KEY = "ale-trail-app-theme";
 
@@ -9,9 +11,9 @@ function storeSelectedTheme(dark: boolean) {
     }
 }
 
-function getStoredTheme(): PaletteType | null {
+function getStoredTheme(): PaletteMode | null {
     if (typeof window !== "undefined" && localStorage) {
-        return localStorage.getItem(THEME_KEY) as PaletteType;
+        return localStorage.getItem(THEME_KEY) as PaletteMode;
     }
 
     return null;
@@ -30,35 +32,39 @@ export const AppThemeContext = createContext<AppThemeContextValue>({
 type Props = { children: ReactNode | ReactNodeArray };
 export function AppThemeProvider({ children }: Props) {
     const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-    const [paletteType, setPaletteType] = useState<PaletteType | null>(null);
+    const [mode, setMode] = useState<PaletteMode>(prefersDarkMode ? "dark" : "light");
     const theme = useMemo(
         () =>
             createTheme({
                 palette: {
-                    type: paletteType || (prefersDarkMode ? "dark" : "light"),
+                    mode,
                 },
             }),
-        [paletteType, prefersDarkMode],
+        [mode],
     );
 
     useEffect(() => {
         const storedTheme = getStoredTheme();
-        if (storedTheme && storedTheme !== paletteType) {
-            setPaletteType(storedTheme);
+        if (storedTheme && storedTheme !== mode) {
+            setMode(storedTheme);
         }
     }, []);
 
     const updateTheme = (dark: boolean) => {
         storeSelectedTheme(dark);
-        setPaletteType(dark ? "dark" : "light");
+        setMode(dark ? "dark" : "light");
     };
 
+    const cache = createCache({ key: "css" });
+
     return (
-        <AppThemeContext.Provider value={{ darkThemeSelected: theme.palette.type === "dark", updateTheme }}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                {children}
-            </ThemeProvider>
+        <AppThemeContext.Provider value={{ darkThemeSelected: theme.palette.mode === "dark", updateTheme }}>
+            <CacheProvider value={cache}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    {children}
+                </ThemeProvider>
+            </CacheProvider>
         </AppThemeContext.Provider>
     );
 }
