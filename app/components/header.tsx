@@ -1,34 +1,15 @@
-import {
-    AppBar,
-    Toolbar,
-    Switch,
-    FormGroup,
-    FormControlLabel,
-    Typography,
-    IconButton,
-    Avatar,
-    Menu,
-    MenuItem,
-} from "@mui/material";
-import { ChangeEvent, MouseEventHandler, useContext, useState, useCallback } from "react";
+import { AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
+import { MouseEventHandler, useState, useCallback } from "react";
 import { Link } from "remix";
 import { useNavigate } from "react-router-dom";
-import { AppThemeContext } from "../context/appThemeContext";
+import SelectTheme from "./selectTheme";
 
 type HeaderProps = { userProfile?: { picture: string; name: string } };
 export default function Header({ userProfile }: HeaderProps) {
     const isAuthenticated = Boolean(userProfile);
-    const { darkThemeSelected, updateTheme } = useContext(AppThemeContext);
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-
-    const handleDarkModeChange = useCallback(
-        (event: ChangeEvent<HTMLInputElement>) => {
-            updateTheme(event.target.checked);
-        },
-        [updateTheme],
-    );
 
     const handleMenu: MouseEventHandler<HTMLButtonElement> = useCallback(event => {
         setAnchorEl(event.currentTarget);
@@ -48,12 +29,7 @@ export default function Header({ userProfile }: HeaderProps) {
                 <Typography sx={{ marginRight: "0.5rem" }} variant="h4">
                     🍻🚉
                 </Typography>
-                <FormGroup row>
-                    <FormControlLabel
-                        control={<Switch checked={darkThemeSelected} onChange={handleDarkModeChange} />}
-                        label="Dark theme"
-                    />
-                </FormGroup>
+                <SelectTheme />
                 <div style={{ flexGrow: 1 }} />
                 {!isAuthenticated && (
                     <Link to="/dashboard" style={{ color: "#FFF", textDecoration: "inherit" }}>
