@@ -1,16 +1,8 @@
-import { Typography, Link, makeStyles } from "@material-ui/core";
-
-const useStyles = makeStyles(() => ({
-    main: {
-        textAlign: "center",
-        padding: "2rem",
-    },
-}));
+import { Typography, Link } from "@mui/material";
 
 export default function ComingSoon() {
-    const classes = useStyles();
     return (
-        <main className={classes.main}>
+        <main style={{ textAlign: "center", padding: "2rem" }}>
             <Typography variant="h4" component="h1">
                 The ale trail planner
             </Typography>

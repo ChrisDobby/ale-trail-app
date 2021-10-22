@@ -4,30 +4,20 @@ import {
     Switch,
     FormGroup,
     FormControlLabel,
-    makeStyles,
     Typography,
     IconButton,
     Avatar,
     Menu,
     MenuItem,
-} from "@material-ui/core";
+} from "@mui/material";
 import { ChangeEvent, MouseEventHandler, useContext, useState, useCallback } from "react";
 import { Link } from "remix";
 import { useNavigate } from "react-router-dom";
 import { AppThemeContext } from "../context/appThemeContext";
 
-const useStyles = makeStyles(() => ({
-    logo: { marginRight: "0.5rem" },
-    grow: {
-        flexGrow: 1,
-    },
-    login: { color: "#FFF", textDecoration: "inherit" },
-}));
-
 type HeaderProps = { userProfile?: { picture: string; name: string } };
 export default function Header({ userProfile }: HeaderProps) {
     const isAuthenticated = Boolean(userProfile);
-    const classes = useStyles();
     const { darkThemeSelected, updateTheme } = useContext(AppThemeContext);
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const open = Boolean(anchorEl);
@@ -55,7 +45,7 @@ export default function Header({ userProfile }: HeaderProps) {
     return (
         <AppBar position="sticky">
             <Toolbar>
-                <Typography className={classes.logo} variant="h4">
+                <Typography sx={{ marginRight: "0.5rem" }} variant="h4">
                     🍻🚉
                 </Typography>
                 <FormGroup row>
@@ -64,9 +54,9 @@ export default function Header({ userProfile }: HeaderProps) {
                         label="Dark theme"
                     />
                 </FormGroup>
-                <div className={classes.grow} />
+                <div style={{ flexGrow: 1 }} />
                 {!isAuthenticated && (
-                    <Link to="/dashboard" className={classes.login}>
+                    <Link to="/dashboard" style={{ color: "#FFF", textDecoration: "inherit" }}>
                         <Typography variant="button">LOGIN</Typography>
                     </Link>
                 )}
