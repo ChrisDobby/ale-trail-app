@@ -11,7 +11,7 @@ import {
     Menu,
     MenuItem,
 } from "@material-ui/core";
-import { ChangeEvent, MouseEventHandler, useContext, useState } from "react";
+import { ChangeEvent, MouseEventHandler, useContext, useState, useCallback } from "react";
 import { Link } from "remix";
 import { useNavigate } from "react-router-dom";
 import { AppThemeContext } from "../context/appThemeContext";
@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type HeaderProps = { userProfile?: { picture: string; name: string } };
-export function Header({ userProfile }: HeaderProps) {
+export default function Header({ userProfile }: HeaderProps) {
     const isAuthenticated = Boolean(userProfile);
     const classes = useStyles();
     const { darkThemeSelected, updateTheme } = useContext(AppThemeContext);
@@ -33,21 +33,24 @@ export function Header({ userProfile }: HeaderProps) {
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
 
-    const handleDarkModeChange = (event: ChangeEvent<HTMLInputElement>) => {
-        updateTheme(event.target.checked);
-    };
+    const handleDarkModeChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            updateTheme(event.target.checked);
+        },
+        [updateTheme],
+    );
 
-    const handleMenu: MouseEventHandler<HTMLButtonElement> = event => {
+    const handleMenu: MouseEventHandler<HTMLButtonElement> = useCallback(event => {
         setAnchorEl(event.currentTarget);
-    };
+    }, []);
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setAnchorEl(null);
-    };
+    }, []);
 
-    const handleLogout = () => {
+    const handleLogout = useCallback(() => {
         navigate("/logout");
-    };
+    }, [navigate]);
 
     return (
         <AppBar position="sticky">

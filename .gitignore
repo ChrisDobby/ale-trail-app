@@ -1,10 +1,7 @@
 node_modules
-
 /.cache
 /netlify/functions/server/build
 /public/build
 /.netlify
-.env
-/.vscode
-yarn-error.log
-/app/styles
+
+.vscode

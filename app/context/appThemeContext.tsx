@@ -1,4 +1,4 @@
-import { createMuiTheme, useMediaQuery, ThemeProvider, CssBaseline, PaletteType } from "@material-ui/core";
+import { createTheme, useMediaQuery, ThemeProvider, CssBaseline, PaletteType } from "@material-ui/core";
 import { createContext, ReactNode, ReactNodeArray, useEffect, useMemo, useState } from "react";
 
 const THEME_KEY = "ale-trail-app-theme";
@@ -22,7 +22,10 @@ type AppThemeContextValue = {
     updateTheme: (dark: boolean) => void;
 };
 
-export const AppThemeContext = createContext<AppThemeContextValue>({ darkThemeSelected: false, updateTheme: () => {} });
+export const AppThemeContext = createContext<AppThemeContextValue>({
+    darkThemeSelected: false,
+    updateTheme: () => ({}),
+});
 
 type Props = { children: ReactNode | ReactNodeArray };
 export function AppThemeProvider({ children }: Props) {
@@ -30,7 +33,7 @@ export function AppThemeProvider({ children }: Props) {
     const [paletteType, setPaletteType] = useState<PaletteType | null>(null);
     const theme = useMemo(
         () =>
-            createMuiTheme({
+            createTheme({
                 palette: {
                     type: paletteType || (prefersDarkMode ? "dark" : "light"),
                 },

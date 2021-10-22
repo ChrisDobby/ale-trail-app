@@ -1,7 +1,7 @@
-import { useRouteData } from "remix";
+import { useLoaderData } from "remix";
 import type { MetaFunction } from "remix";
 import { AuthenticatedLoaderArgs, getAuthHeader, getUser, secure } from "../authentication";
-import { Header } from "../components/header";
+import Header from "../components/header";
 import { tokenCookie } from "../cookies";
 import { getSession, commitSession } from "../session";
 import ComingSoon from "../components/comingSoon";
@@ -17,10 +17,10 @@ function dashboardLoader({ context: { auth, headers } }: AuthenticatedLoaderArgs
     return getUser({ ...headers, ...getAuthHeader(auth) });
 }
 
-export const loader = (args: any) => secure({ tokenCookie, getSession, commitSession, args }, dashboardLoader);
+export const loader = (args: any) => secure({ cookie: tokenCookie, getSession, commitSession, args }, dashboardLoader);
 
 export default function Dashboard() {
-    const data = useRouteData();
+    const data = useLoaderData();
     return (
         <>
             <Header userProfile={data} />
