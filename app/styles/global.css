@@ -5,3 +5,9 @@
 body {
   font-family: sans-serif;
 }
+
+footer {
+  text-align: center;
+  color: #ccc;
+  padding-top: 80px;
+}

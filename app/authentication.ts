@@ -1,4 +1,4 @@
-import { redirect, Request } from "remix";
+import { redirect } from "remix";
 import type { Cookie, Session, LoaderFunction, AppLoadContext } from "remix";
 import { v4 as uuidv4 } from "uuid";
 import { tokenCookie } from "./cookies";
@@ -49,12 +49,13 @@ export async function retrieveToken({ code, refreshToken, request }: RetrieveTok
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const { access_token, refresh_token, expires_in } = await authResponse.json();
     return { access_token, refresh_token, expires_at: getSecondsSinceEpoch(new Date()) + expires_in };
 }
 
 type SecureOptions = {
-    tokenCookie: Cookie;
+    cookie: Cookie;
     getSession: (cookieHeader: string | null) => Promise<Session>;
     commitSession: (session: Session) => Promise<string>;
     args: {
@@ -69,28 +70,23 @@ export function getAuthHeader(auth: Auth) {
 }
 
 export function getUser(headers: HeadersInit) {
-    console.log("***** getUser *******");
-    console.log(AUTH_URL);
     return fetch(`${AUTH_URL}/userinfo`, { headers });
 }
 
-export function logout(request: Request) {
+export async function logout(request: Request) {
     return redirect(`${AUTH_URL}/v2/logout?client_id=${AUTH_CLIENT_ID}&returnTo=${getHostUrl(request)}`, {
-        headers: { "Set-Cookie": tokenCookie.serialize("", { expires: new Date() }) },
+        headers: { "Set-Cookie": await tokenCookie.serialize("", { expires: new Date() }) },
     });
 }
 
-export function getAuth(tokenCookie: Cookie, request: Request): Auth | null {
-    const token = tokenCookie.parse(request.headers.get("Cookie"));
+export async function getAuth(cookie: Cookie, request: Request): Promise<Auth | null> {
+    const token = await cookie.parse(request.headers.get("Cookie"));
     return token || null;
 }
 
-export async function secure({ tokenCookie, getSession, commitSession, args }: SecureOptions, loader: LoaderFunction) {
-    console.log("******* secure ************");
-    console.log(args);
+export async function secure({ cookie, getSession, commitSession, args }: SecureOptions, loader: LoaderFunction) {
     const { request } = args;
-    let auth = getAuth(tokenCookie, request);
-    console.log(auth);
+    let auth = await getAuth(cookie, request);
     if (!auth) {
         const { pathname } = new URL(request.url);
         const session = await getSession(request.headers.get("Cookie"));
@@ -108,7 +104,7 @@ export async function secure({ tokenCookie, getSession, commitSession, args }: S
     let headers = {};
     if (hasTokenExpired(auth.expires_at)) {
         auth = await retrieveToken({ refreshToken: auth.refresh_token });
-        headers = { "Set-Cookie": tokenCookie.serialize(auth) };
+        headers = { "Set-Cookie": await cookie.serialize(auth) };
     }
 
     const authContext = auth
