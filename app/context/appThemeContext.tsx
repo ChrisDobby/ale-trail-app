@@ -1,7 +1,7 @@
 import { createTheme, useMediaQuery, ThemeProvider, CssBaseline, PaletteMode } from "@mui/material";
 import { createContext, ReactNode, ReactNodeArray, useEffect, useMemo, useState } from "react";
-import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
+// import { CacheProvider } from "@emotion/react";
+// import createCache from "@emotion/cache";
 
 const THEME_KEY = "ale-trail-app-theme";
 
@@ -55,16 +55,16 @@ export function AppThemeProvider({ children }: Props) {
         setMode(dark ? "dark" : "light");
     };
 
-    const cache = createCache({ key: "css" });
+    // const cache = createCache({ key: "css" });
 
     return (
         <AppThemeContext.Provider value={{ darkThemeSelected: theme.palette.mode === "dark", updateTheme }}>
-            <CacheProvider value={cache}>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    {children}
-                </ThemeProvider>
-            </CacheProvider>
+            {/* <CacheProvider value={cache}> */}
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                {children}
+            </ThemeProvider>
+            {/* </CacheProvider> */}
         </AppThemeContext.Provider>
     );
 }
