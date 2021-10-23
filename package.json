@@ -5,9 +5,8 @@
   "license": "",
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev",
+    "dev": "concurrently \"remix dev\" \"cross-env NODE_ENV=development netlify dev\"",
     "postinstall": "remix setup node",
-    "dev:netlify": "cross-env NODE_ENV=development netlify dev",
     "format": "prettier --write  ./**/*.{ts,tsx}",
     "lint": "eslint ./**/*.{ts,tsx}",
     "prepare": "husky install"
@@ -33,6 +32,7 @@
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.0.1",
     "eslint-config-airbnb-typescript": "^14.0.1",
