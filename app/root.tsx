@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { AppThemeProvider } from "./context/appThemeContext";
 
 import stylesUrl from "./styles/global.css";
+import "@emotion/styled";
 
 export const links: LinksFunction = () => {
     return [{ rel: "stylesheet", href: stylesUrl }];
