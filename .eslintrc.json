@@ -30,7 +30,7 @@
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "import/prefer-default-export": "warn",
-        "react/jsx-no-bind": "error",
+        "react/jsx-no-bind": "off",
         "react/jsx-no-multiline-js": "off",
         "react/jsx-boolean-value": "off",
         "react/jsx-props-no-spreading": "off",

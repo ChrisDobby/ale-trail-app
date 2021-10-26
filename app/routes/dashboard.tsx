@@ -1,4 +1,4 @@
-import { useLoaderData } from "remix";
+import { useLoaderData, Link } from "remix";
 import type { MetaFunction } from "remix";
 import { AuthenticatedLoaderArgs, getAuthHeader, getUser, secure } from "../authentication";
 import Header from "../components/header";
@@ -25,6 +25,7 @@ export default function Dashboard() {
         <>
             <Header userProfile={data} />
             <ComingSoon />
+            <Link to="/trail/create">Create new trail</Link>
         </>
     );
 }
