@@ -5,6 +5,8 @@ import Chip from "@mui/material/Chip";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AddIcon from "@mui/icons-material/Add";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import format from "date-fns/format";
 import { Station, Stop, Meeting } from "../types";
 import SelectStation from "./selectStation";
@@ -18,17 +20,36 @@ type StopEntryProps = {
 function StopEntry({ station, previousStation, previousTime, onSelectTime }: StopEntryProps) {
     const { type, data, load } = useFetcher();
 
+    const loadUrl = `/trains/times?from=${previousStation.id}&to=${station?.id}&after=${previousTime.toISOString()}`;
     useEffect(() => {
         if (station) {
-            load(`/trains/times?from=${previousStation.id}&to=${station.id}&after=${previousTime.toISOString()}`);
+            load(loadUrl);
         }
     }, [station, previousStation]);
+
+    const handleTimeChange = (diff: number) => () => {
+        const trainNumber = (data?.trainNumber || 0) + diff;
+        load(`${loadUrl}&trainNumber=${trainNumber}`);
+    };
 
     return (
         <Stack spacing={2} sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Typography variant="body1">{`${previousStation.name || ""} - ${station?.name || ""}`}</Typography>
-            <Stack>
-                <Chip label={type === "done" && station ? format(new Date(data.dateTime), "HH:mm") : ""} />
+            <Stack direction="row" spacing={2}>
+                <Chip
+                    sx={{ minWidth: "5rem" }}
+                    label={type === "done" && station ? format(new Date(data.dateTime), "HH:mm") : ""}
+                />
+                <Button
+                    disabled={!station || data?.trainNumber === 1}
+                    startIcon={<ArrowLeftIcon />}
+                    onClick={handleTimeChange(-1)}
+                >
+                    Earlier
+                </Button>
+                <Button disabled={!station} endIcon={<ArrowRightIcon />} onClick={handleTimeChange(1)}>
+                    Later
+                </Button>
             </Stack>
             <Button
                 startIcon={<AddIcon />}
