@@ -1,46 +1,29 @@
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import { SelectChangeEvent } from "@mui/material";
-import { Station } from "../types";
-import StationList from "./stationList";
+import { Station, Stop, Meeting } from "../types";
+import SelectStop from "./selectStop";
+import StopList from "./stopList";
 
 type SelectStopsProps = {
     visible: boolean;
     stations: Station[];
-    selectedStations: Station[];
-    setSelectedStations: (stations: Station[]) => void;
+    selectedStops: Stop[];
+    meeting: Meeting;
+    setSelectedStops: (stations: Stop[]) => void;
 };
 
-export default function SelectStops({ visible, stations, selectedStations, setSelectedStations }: SelectStopsProps) {
-    const handleAddClick = (event: SelectChangeEvent<string>) => {
-        const selectedStation = stations.find(({ id }) => id === event.target.value) || null;
-        if (selectedStation) {
-            setSelectedStations([...selectedStations, selectedStation]);
-        }
+export default function SelectStops({ visible, stations, selectedStops, meeting, setSelectedStops }: SelectStopsProps) {
+    const handleStopSelect = (stop: Stop) => {
+        setSelectedStops([...selectedStops, stop]);
     };
 
     return (
         <div className="entry-container" style={{ display: visible ? "flex" : "none", flexDirection: "column" }}>
-            <FormControl fullWidth sx={{ flexGrow: 1 }}>
-                <InputLabel id="select-station-label">Add a station</InputLabel>
-                <Select
-                    sx={{ flexGrow: 1 }}
-                    labelId="select-station-label"
-                    label="Pick a station"
-                    value={"__blank__"}
-                    onChange={handleAddClick}
-                >
-                    <MenuItem value="__blank__" />
-                    {stations.map(station => (
-                        <MenuItem key={station.id} value={station.id}>
-                            {station.name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            <StationList stations={selectedStations} setSelectedStations={setSelectedStations} />
+            <SelectStop
+                stations={stations}
+                previousStop={selectedStops[selectedStops.length - 1]}
+                meeting={meeting}
+                onSelect={handleStopSelect}
+            />
+            <StopList stops={selectedStops} meeting={meeting} setSelectedStops={setSelectedStops} />
         </div>
     );
 }

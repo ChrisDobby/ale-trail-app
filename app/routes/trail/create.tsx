@@ -1,19 +1,9 @@
 import { LoaderFunction, MetaFunction, json, useLoaderData } from "remix";
 import CreateTrail from "../../components/createTrail";
+import trailStations from "../../stations";
 
 export const loader: LoaderFunction = () => {
-    const stations = [
-        "Batley",
-        "Dewsbury",
-        "Mirfield",
-        "Huddersfield",
-        "Slaithwaite",
-        "Marsden",
-        "Greenfield",
-        "Stalybridge",
-    ].map((name, index) => ({ id: index + 1, name }));
-
-    return json({ stations });
+    return json({ stations: trailStations });
 };
 
 export const meta: MetaFunction = () => {
