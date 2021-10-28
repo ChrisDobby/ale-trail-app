@@ -1,13 +1,13 @@
-import { LoaderFunction, MetaFunction, useLoaderData } from "remix";
+import { LoaderFunction, MetaFunction, redirect } from "remix";
 import Header from "../components/header";
 import ComingSoon from "../components/comingSoon";
 import { tokenCookie } from "../cookies";
-import { getAuth, getAuthHeader, getUser } from "../authentication";
+import { getAuth } from "../authentication";
 
 export const loader: LoaderFunction = async ({ request }) => {
     const auth = await getAuth(tokenCookie, request);
     if (auth) {
-        return getUser(getAuthHeader(auth));
+        return redirect("/dashboard");
     }
 
     return null;
@@ -21,10 +21,9 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-    const user = useLoaderData();
     return (
         <>
-            <Header userProfile={user} />
+            <Header />
             <ComingSoon />
         </>
     );

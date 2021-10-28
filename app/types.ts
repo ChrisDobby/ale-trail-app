@@ -26,7 +26,7 @@ export type Store = {
     setTrail: (id: string, trail: Trail) => Promise<any>;
     addTrailToUser: (userId: string, trailId: string, trail: UserTrail) => Promise<any>;
     getTrail: (id: string) => Promise<Trail | null>;
-    trailsForUser: (userId: string) => Promise<Trail[]>;
+    trailsForUser: (userId: string) => Promise<UserTrail[]>;
 };
 
 export type StoreContext = AppLoadContext & { store: Store };
