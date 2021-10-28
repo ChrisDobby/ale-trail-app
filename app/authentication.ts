@@ -2,14 +2,12 @@ import { redirect } from "remix";
 import type { Cookie, Session, LoaderFunction, AppLoadContext } from "remix";
 import { v4 as uuidv4 } from "uuid";
 import { tokenCookie } from "./cookies";
+import { Auth, AuthenticatedContext } from "./types";
 
 const AUTH_CLIENT_ID = process.env.AUTH_CLIENT_ID || "";
 const AUTH_CLIENT_SECRET = process.env.AUTH_CLIENT_SECRET || "";
 const AUTH_URL = process.env.AUTH_URL || "";
 
-type Auth = { access_token: string; refresh_token: string; expires_at: number };
-
-type AuthenticatedContext = AppLoadContext & { auth: Auth; headers: HeadersInit };
 export type AuthenticatedLoaderArgs = { request: Request; context: AuthenticatedContext; params: any };
 
 function getSecondsSinceEpoch(now: Date) {

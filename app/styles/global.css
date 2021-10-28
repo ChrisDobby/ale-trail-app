@@ -4,10 +4,23 @@
 
 body {
   font-family: sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 footer {
   text-align: center;
   color: #ccc;
   padding-top: 80px;
+}
+
+.entry-container {
+  padding: 2rem;
+}
+
+.bottom-right-button {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }

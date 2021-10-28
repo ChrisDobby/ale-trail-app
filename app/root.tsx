@@ -2,6 +2,8 @@ import type { LinksFunction } from "remix";
 import { Meta, Links, Scripts, LiveReload, useCatch } from "remix";
 import { Outlet } from "react-router-dom";
 import { AppThemeProvider } from "./context/appThemeContext";
+import DateAdapter from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
 
 import stylesUrl from "./styles/global.css";
 import "@emotion/styled";
@@ -34,7 +36,9 @@ export default function App() {
     return (
         <Document>
             <AppThemeProvider>
-                <Outlet />
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                    <Outlet />
+                </LocalizationProvider>
             </AppThemeProvider>
         </Document>
     );
