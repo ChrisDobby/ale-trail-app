@@ -1,7 +1,7 @@
-# Welcome to Remix!
+[![Netlify Status](https://api.netlify.com/api/v1/badges/063ef9c5-3a3f-4c1c-9c67-bfe483d65c3e/deploy-status)](https://app.netlify.com/sites/ale-trail-app/deploys)
+# Ale trail planner!
 
-- [Remix Docs](https://docs.remix.run)
-- [Customer Dashboard](https://remix.run/dashboard)
+Turns out we need a planner for our annual ale trail which also gave me a chance to do something with the fantasic [Remix](https://docs.remix.run).
 
 ## Netlify Setup
 
