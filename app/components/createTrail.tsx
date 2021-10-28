@@ -9,8 +9,9 @@ import { Station, Stop, Meeting } from "../types";
 
 const STEP_LABELS = ["Meeting details", "Select stops"];
 
-type CreateTrailProps = { stations: Station[] };
-export default function CreateTrail({ stations }: CreateTrailProps) {
+export type TrailToCreate = { meeting: Meeting; stops: Stop[] };
+type CreateTrailProps = { stations: Station[]; onCreate: (trail: TrailToCreate) => void };
+export default function CreateTrail({ stations, onCreate }: CreateTrailProps) {
     const theme = useTheme();
     const [activeStep, setActiveStep] = useState(0);
     const [meeting, setMeeting] = useState<Meeting | null>(null);
@@ -19,6 +20,12 @@ export default function CreateTrail({ stations }: CreateTrailProps) {
     const handleNext = useCallback(() => {
         setActiveStep(prevActiveStep => prevActiveStep + 1);
     }, [setActiveStep]);
+
+    const handleCreate = () => {
+        if (meeting) {
+            onCreate({ meeting, stops: selectedStops });
+        }
+    };
 
     return (
         <Box sx={{ flexGrow: 1, bgcolor: theme.palette.action.disabledBackground }}>
@@ -54,7 +61,11 @@ export default function CreateTrail({ stations }: CreateTrailProps) {
                 activeStep={activeStep}
                 sx={{ flexGrow: 1 }}
                 nextButton={
-                    <Button size="small" onClick={handleNext} disabled={activeStep === 0 && !meeting}>
+                    <Button
+                        size="small"
+                        onClick={activeStep === 0 ? handleNext : handleCreate}
+                        disabled={activeStep === 0 && !meeting}
+                    >
                         {activeStep === 1 ? "Create" : "Next"}
                         {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                     </Button>
