@@ -18,3 +18,9 @@ footer {
 .entry-container {
   padding: 2rem;
 }
+
+.bottom-right-button {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}

@@ -1,5 +1,7 @@
 import { useLoaderData, Link } from "remix";
 import type { MetaFunction } from "remix";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 import { AuthenticatedLoaderArgs, getAuthHeader, getUser, secure } from "../authentication";
 import Header from "../components/header";
 import { tokenCookie } from "../cookies";
@@ -25,7 +27,11 @@ export default function Dashboard() {
         <>
             <Header userProfile={data} />
             <ComingSoon />
-            <Link to="/trail/create">Create new trail</Link>
+            <Link to="/trail/create" className="bottom-right-button">
+                <Button variant="contained" color="success" startIcon={<AddIcon />}>
+                    Create new trail
+                </Button>
+            </Link>
         </>
     );
 }
