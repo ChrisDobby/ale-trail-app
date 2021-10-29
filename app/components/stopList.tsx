@@ -30,13 +30,21 @@ function StopItem({ stop, readOnly, onDelete }: StopItemProps) {
                     <TrainIcon />
                 </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={`${stop.from.name} to ${stop.to.name}`} secondary={format(stop.dateTime, "HH:mm")} />
+            <ListItemText
+                primary={`${stop.from.name} to ${stop.to.name}`}
+                secondary={format(new Date(stop.dateTime), "HH:mm")}
+            />
         </ListItem>
     );
 }
 
-type StopListProps = { stops: Stop[]; meeting: Meeting; setSelectedStops: (stops: Stop[]) => void };
-export default function StopList({ stops, meeting, setSelectedStops }: StopListProps) {
+type StopListProps = {
+    stops: Stop[];
+    meeting: Meeting;
+    readOnly?: boolean;
+    setSelectedStops?: (stops: Stop[]) => void;
+};
+export default function StopList({ stops, meeting, readOnly = false, setSelectedStops = () => {} }: StopListProps) {
     const handleDelete = (index: number) => () => {
         setSelectedStops(stops.filter((_, stopIndex) => index !== stopIndex));
     };
@@ -49,12 +57,16 @@ export default function StopList({ stops, meeting, setSelectedStops }: StopListP
                         <PeopleIcon />
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={meeting.station.name} secondary={format(meeting.dateTime, "HH:mm")} />
+                <ListItemText primary={meeting.station.name} secondary={format(new Date(meeting.dateTime), "HH:mm")} />
             </ListItem>
 
             {Children.toArray(
                 stops.map((stop, index) => (
-                    <StopItem stop={stop} readOnly={index !== stops.length - 1} onDelete={handleDelete(index)} />
+                    <StopItem
+                        stop={stop}
+                        readOnly={readOnly || index !== stops.length - 1}
+                        onDelete={handleDelete(index)}
+                    />
                 )),
             )}
         </List>

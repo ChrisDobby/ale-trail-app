@@ -14,13 +14,13 @@ import SelectStation from "./selectStation";
 type StopEntryProps = {
     station?: Station;
     previousStation: Station;
-    previousTime: Date;
-    onSelectTime: (time: Date) => void;
+    previousTime: string;
+    onSelectTime: (time: string) => void;
 };
 function StopEntry({ station, previousStation, previousTime, onSelectTime }: StopEntryProps) {
     const { type, data, load } = useFetcher();
 
-    const loadUrl = `/trains/times?from=${previousStation.id}&to=${station?.id}&after=${previousTime.toISOString()}`;
+    const loadUrl = `/trains/times?from=${previousStation.id}&to=${station?.id}&after=${previousTime}`;
     useEffect(() => {
         if (station) {
             load(loadUrl);
@@ -55,7 +55,7 @@ function StopEntry({ station, previousStation, previousTime, onSelectTime }: Sto
                 startIcon={<AddIcon />}
                 color="success"
                 variant="contained"
-                onClick={() => onSelectTime(new Date(data.dateTime))}
+                onClick={() => onSelectTime(data.dateTime)}
                 disabled={!station || type !== "done"}
             >
                 Add stop
@@ -69,7 +69,7 @@ export default function SelectStop({ stations, meeting, previousStop, onSelect }
     const [station, setStation] = useState<Station>();
 
     const previousStation = previousStop ? previousStop.to : meeting.station;
-    const handleSelectTime = (dateTime: Date) => {
+    const handleSelectTime = (dateTime: string) => {
         if (station) {
             onSelect({ from: previousStation, to: station, dateTime });
             setStation(undefined);
