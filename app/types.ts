@@ -2,9 +2,9 @@ import type { AppLoadContext } from "remix";
 
 export type Station = { id: string; name: string };
 
-export type Stop = { from: Station; to: Station; dateTime: Date };
+export type Stop = { from: Station; to: Station; dateTime: string };
 
-export type Meeting = { dateTime: Date; station: Station };
+export type Meeting = { dateTime: string; station: Station };
 
 export type Trail = {
     id: string;

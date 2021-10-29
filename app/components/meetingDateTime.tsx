@@ -10,11 +10,11 @@ type MeetingDateTimeProps = {
     onMeetingSelect: (meeting: Meeting | null) => void;
 };
 export default function MeetingDateTime({ stations, onMeetingSelect }: MeetingDateTimeProps) {
-    const [dateTime, setDateTime] = useState(new Date());
+    const [dateTime, setDateTime] = useState(new Date().toISOString());
     const [station, setStation] = useState<Station>();
 
     const handleDateChange = (newDateTime: any) => {
-        setDateTime(newDateTime);
+        setDateTime(newDateTime.toISOString());
         onMeetingSelect(newDateTime && station ? { station, dateTime: newDateTime } : null);
     };
 
