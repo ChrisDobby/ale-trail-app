@@ -11,6 +11,7 @@ export type Trail = {
     meeting: Meeting;
     stops: Stop[];
     createdBy: string;
+    currentStop?: string;
 };
 
 export type UserTrail = {
