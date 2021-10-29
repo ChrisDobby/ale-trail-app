@@ -3,8 +3,10 @@ import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import format from "date-fns/format";
 import QrCode from "qrcode.react";
 import { Trail } from "../types";
@@ -52,6 +54,11 @@ export default function ViewTrail({ trail, canStart, onStart }: ViewTrailProps) 
                     <Invite id={trail.id} />
                 </AccordionDetails>
             </Accordion>
+            {canStart && (
+                <Button variant="contained" color="success" onClick={onStart} endIcon={<KeyboardArrowRightIcon />}>
+                    Start the trail
+                </Button>
+            )}
         </Stack>
     );
 }

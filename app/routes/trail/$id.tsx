@@ -5,8 +5,13 @@ import { secure, AuthenticatedLoaderArgs, getAuthHeader, getUser } from "../../a
 import { tokenCookie } from "../../cookies";
 import { getSession, commitSession } from "../../session";
 import { StoreLoaderArgs } from "../../store";
+import { Trail } from "../../types";
 import withStore from "../../withStore";
 import ViewTrail from "../../components/viewTrail";
+
+function canStartTrail(trail: Trail, userId: string) {
+    return userId === trail.createdBy && new Date(trail.meeting.dateTime).toDateString() === new Date().toDateString();
+}
 
 export const meta: MetaFunction = (params: any) => {
     const {
@@ -38,16 +43,16 @@ async function viewLoader({
         stops: Object.values(storedTrail.stops),
     };
 
-    return { trail, canStart: trail.createdBy === user.sub };
+    return { trail, canStart: canStartTrail(trail, user.sub) };
 }
 
 export const loader = (args: any) =>
     secure({ cookie: tokenCookie, getSession, commitSession, args }, withStore(viewLoader));
 
 export default function View() {
-    const { trail } = useLoaderData();
+    const { trail, canStart } = useLoaderData();
 
     const handleStart = () => {};
 
-    return <ViewTrail trail={trail} canStart onStart={handleStart} />;
+    return <ViewTrail trail={trail} canStart={canStart} onStart={handleStart} />;
 }
