@@ -1,3 +1,4 @@
+import { Link } from "remix";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
@@ -32,10 +33,11 @@ function Invite({ id }: InviteProps) {
 type ViewTrailProps = {
     trail: Trail;
     canStart: boolean;
+    canUpdateProgress: boolean;
     currentStation: { stopIndex: number | null; name: string };
     onStart: () => void;
 };
-export default function ViewTrail({ trail, canStart, currentStation, onStart }: ViewTrailProps) {
+export default function ViewTrail({ trail, canStart, canUpdateProgress, currentStation, onStart }: ViewTrailProps) {
     const theme = useTheme();
 
     return (
@@ -73,6 +75,13 @@ export default function ViewTrail({ trail, canStart, currentStation, onStart }: 
                 <Button variant="contained" color="success" onClick={onStart} endIcon={<KeyboardArrowRightIcon />}>
                     Start the trail
                 </Button>
+            )}
+            {canUpdateProgress && (
+                <Link to={`/trail/progress/${trail.id}`}>
+                    <Button variant="contained" color="success" endIcon={<KeyboardArrowRightIcon />}>
+                        Update progress
+                    </Button>
+                </Link>
             )}
         </Stack>
     );

@@ -51,6 +51,7 @@ async function viewLoader({
         trail,
         canStart: canStartTrail(trail.createdBy, trail.meeting.dateTime, user.sub, trail.currentStop),
         currentStation: getCurrentStation(trail),
+        userIsCreator: user.sub === trail.createdBy,
     };
 }
 
@@ -84,7 +85,7 @@ export const action = (args: any) =>
     secure({ cookie: tokenCookie, getSession, commitSession, args }, withStore(startTrailAction));
 
 export default function View() {
-    const { trail, canStart, currentStation } = useLoaderData();
+    const { trail, canStart, currentStation, userIsCreator } = useLoaderData();
 
     const submit = useSubmit();
 
@@ -92,5 +93,13 @@ export default function View() {
         submit(null, { method: "post" });
     };
 
-    return <ViewTrail trail={trail} canStart={canStart} currentStation={currentStation} onStart={handleStart} />;
+    return (
+        <ViewTrail
+            trail={trail}
+            canStart={canStart}
+            canUpdateProgress={!canStart && userIsCreator}
+            currentStation={currentStation}
+            onStart={handleStart}
+        />
+    );
 }
