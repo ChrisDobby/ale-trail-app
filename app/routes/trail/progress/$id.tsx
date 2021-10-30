@@ -35,7 +35,7 @@ async function progressLoader({
         stops: Object.values(storedTrail.stops),
     };
 
-    return { station: getCurrentStation(trail), nextTrain: getNextTrain(trail, new Date()) };
+    return { station: getCurrentStation(trail)?.name, nextTrain: getNextTrain(trail, new Date()) };
 }
 
 export const loader = (args: any) =>

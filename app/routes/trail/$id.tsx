@@ -7,6 +7,7 @@ import { getSession, commitSession } from "../../session";
 import { StoreLoaderArgs } from "../../store";
 import withStore from "../../withStore";
 import ViewTrail from "../../components/viewTrail";
+import { getCurrentStation } from "../../utils";
 
 function canStartTrail(createdBy: string, meetingDateTime: string, userId: string, currentStop?: string) {
     return (
@@ -46,7 +47,11 @@ async function viewLoader({
         stops: Object.values(storedTrail.stops),
     };
 
-    return { trail, canStart: canStartTrail(trail.createdBy, trail.meeting.dateTime, user.sub, trail.currentStop) };
+    return {
+        trail,
+        canStart: canStartTrail(trail.createdBy, trail.meeting.dateTime, user.sub, trail.currentStop),
+        currentStation: getCurrentStation(trail),
+    };
 }
 
 export const loader = (args: any) =>
@@ -79,7 +84,7 @@ export const action = (args: any) =>
     secure({ cookie: tokenCookie, getSession, commitSession, args }, withStore(startTrailAction));
 
 export default function View() {
-    const { trail, canStart } = useLoaderData();
+    const { trail, canStart, currentStation } = useLoaderData();
 
     const submit = useSubmit();
 
@@ -87,5 +92,5 @@ export default function View() {
         submit(null, { method: "post" });
     };
 
-    return <ViewTrail trail={trail} canStart={canStart} onStart={handleStart} />;
+    return <ViewTrail trail={trail} canStart={canStart} currentStation={currentStation} onStart={handleStart} />;
 }

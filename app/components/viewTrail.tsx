@@ -29,8 +29,13 @@ function Invite({ id }: InviteProps) {
     );
 }
 
-type ViewTrailProps = { trail: Trail; canStart: boolean; onStart: () => void };
-export default function ViewTrail({ trail, canStart, onStart }: ViewTrailProps) {
+type ViewTrailProps = {
+    trail: Trail;
+    canStart: boolean;
+    currentStation: { stopIndex: number | null; name: string };
+    onStart: () => void;
+};
+export default function ViewTrail({ trail, canStart, currentStation, onStart }: ViewTrailProps) {
     const theme = useTheme();
 
     return (
@@ -38,12 +43,22 @@ export default function ViewTrail({ trail, canStart, onStart }: ViewTrailProps) 
             <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
                 {format(new Date(trail.meeting.dateTime), "dd-MMM-yyyy HH:mm")}
             </Typography>
+            {currentStation.name && (
+                <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
+                    {`Currently at ${currentStation.name}`}
+                </Typography>
+            )}
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Details</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <StopList meeting={trail.meeting} stops={trail.stops} readOnly />
+                    <StopList
+                        meeting={trail.meeting}
+                        stops={trail.stops}
+                        readOnly
+                        currentStopIndex={currentStation.stopIndex}
+                    />
                 </AccordionDetails>
             </Accordion>
             <Accordion>

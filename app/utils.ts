@@ -1,24 +1,25 @@
-import { Stop, Trail } from "./types";
+import { Stop, Trail, Train } from "./types";
 
 export function getCurrentStation(trail: Trail) {
     switch (true) {
         case !trail.currentStop:
-            return "";
+            return { name: "", stopIndex: null };
         case trail.currentStop === "meeting":
-            return trail.meeting.station.name;
+            return { name: trail.meeting.station.name, stopIndex: null };
         case trail.currentStop?.startsWith("stop:"): {
             const [, stopNo] = (trail.currentStop as string).split(":");
-            return trail.stops[Number(stopNo)].to.name;
+            const stopIndex = Number(stopNo);
+            return { name: trail.stops[stopIndex].to.name, stopIndex };
         }
     }
 }
 
-function nextTrainFromStop(stop: Stop, currentDateTime: Date) {
+function nextTrainFromStop(index: number, stop: Stop, currentDateTime: Date): Train {
     if (!stop) {
-        return { dateTime: "", station: "", due: false };
+        return { index, dateTime: "", station: "", due: false };
     }
 
-    return { dateTime: stop.dateTime, station: stop.to.name, due: currentDateTime > new Date(stop.dateTime) };
+    return { index, dateTime: stop.dateTime, station: stop.to.name, due: currentDateTime > new Date(stop.dateTime) };
 }
 
 export function getNextTrain(trail: Trail, currentDateTime: Date) {
@@ -26,10 +27,11 @@ export function getNextTrain(trail: Trail, currentDateTime: Date) {
         case !trail.currentStop:
             return { dateTime: "", station: "", due: false };
         case trail.currentStop === "meeting":
-            return nextTrainFromStop(trail.stops[0], currentDateTime);
+            return nextTrainFromStop(0, trail.stops[0], currentDateTime);
         case trail.currentStop?.startsWith("stop:"): {
             const [, stopNo] = (trail.currentStop as string).split(":");
-            return nextTrainFromStop(trail.stops[Number(stopNo)], currentDateTime);
+            const nextStopIndex = Number(stopNo) + 1;
+            return nextTrainFromStop(nextStopIndex, trail.stops[nextStopIndex], currentDateTime);
         }
     }
 }

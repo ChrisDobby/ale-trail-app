@@ -5,10 +5,11 @@ import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import format from "date-fns/format";
+import { Train } from "../types";
 
 type TrailProgressProps = {
     station: string;
-    nextTrain: { dateTime: string; station: string; due: boolean };
+    nextTrain: Train;
     trailNotStarted: boolean;
 };
 export default function TrailProgress({ station, nextTrain, trailNotStarted }: TrailProgressProps) {
