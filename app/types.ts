@@ -6,12 +6,14 @@ export type Stop = { from: Station; to: Station; dateTime: string };
 
 export type Meeting = { dateTime: string; station: Station };
 
+type ProgressUpdate = { stop: string; time: string; action: "next" | "missed" };
 export type Trail = {
     id: string;
     meeting: Meeting;
     stops: Stop[];
     createdBy: string;
     currentStop?: string;
+    progressUpdates?: ProgressUpdate[];
 };
 
 export type UserTrail = {
@@ -25,6 +27,12 @@ export type AuthenticatedContext = AppLoadContext & { auth: Auth; headers: Heade
 
 export type Store = {
     setTrail: (id: string, trail: Trail) => Promise<any>;
+    updateProgress: (
+        id: string,
+        updateForStop: string,
+        updateForTime: string,
+        getUpdatedTrail: () => Promise<Trail>,
+    ) => Promise<boolean>;
     addTrailToUser: (userId: string, trailId: string, trail: UserTrail) => Promise<any>;
     getTrail: (id: string) => Promise<Trail | null>;
     trailsForUser: (userId: string) => Promise<UserTrail[]>;

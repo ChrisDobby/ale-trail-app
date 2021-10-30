@@ -35,3 +35,20 @@ export function getNextTrain(trail: Trail, currentDateTime: Date) {
         }
     }
 }
+
+function getNextStop(currentStop?: string) {
+    if (!currentStop) {
+        return "meeting";
+    }
+
+    if (currentStop === "meeting") {
+        return "stop:0";
+    }
+
+    const [, stopNo] = currentStop.split(":");
+    return `stop:${Number(stopNo) + 1}`;
+}
+
+export function moveToNextStation(trail: Trail): Trail {
+    return { ...trail, currentStop: getNextStop(trail.currentStop) };
+}
