@@ -52,3 +52,11 @@ function getNextStop(currentStop?: string) {
 export function moveToNextStation(trail: Trail): Trail {
     return { ...trail, currentStop: getNextStop(trail.currentStop) };
 }
+
+export function storedTrailToTrail(storedTrail: any): Trail {
+    return {
+        ...storedTrail,
+        stops: Object.values(storedTrail.stops),
+        progressUpdates: storedTrail.progressUpdates ? Object.values(storedTrail.progressUpdates) : [],
+    };
+}

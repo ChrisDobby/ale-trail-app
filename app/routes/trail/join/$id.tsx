@@ -7,6 +7,7 @@ import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
 import JoinTrail from "../../../components/joinTrail";
+import { storedTrailToTrail } from "../../../utils";
 
 function canJoinTrail(id: string, userTrails: UserTrail[]) {
     return !userTrails.map(trail => trail.id).includes(id);
@@ -32,10 +33,7 @@ async function joinLoader({
     const [storedTrail, storedUserTrails] = await Promise.all([getTrail(id), trailsForUser(user.sub)]);
 
     const userTrails = Object.values(storedUserTrails) as UserTrail[];
-    const trail = {
-        ...storedTrail,
-        stops: Object.values(storedTrail.stops),
-    };
+    const trail = storedTrailToTrail(storedTrail);
 
     return { trail, canJoin: canJoinTrail(id, userTrails) };
 }

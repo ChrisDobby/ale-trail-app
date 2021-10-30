@@ -16,7 +16,7 @@ type StopItemProps = { stop: Stop; readOnly: boolean; disabled: boolean; onDelet
 function StopItem({ stop, readOnly, disabled, onDelete }: StopItemProps) {
     return (
         <ListItem
-            sx={{ bgcolor: "background.paper", opacity: disabled ? 0.6 : 1 }}
+            sx={{ bgcolor: "background.paper", opacity: disabled ? 0.3 : 1 }}
             secondaryAction={
                 !readOnly ? (
                     <IconButton edge="end" onClick={onDelete}>
@@ -58,7 +58,7 @@ export default function StopList({
 
     return (
         <List>
-            <ListItem sx={{ bgcolor: "background.paper", opacity: currentStopIndex !== null ? 0.6 : 1 }}>
+            <ListItem sx={{ bgcolor: "background.paper", opacity: currentStopIndex !== null ? 0.3 : 1 }}>
                 <ListItemAvatar>
                     <Avatar>
                         <PeopleIcon />
@@ -72,7 +72,7 @@ export default function StopList({
                     <StopItem
                         stop={stop}
                         readOnly={readOnly || index !== stops.length - 1}
-                        disabled={currentStopIndex !== null && index >= currentStopIndex}
+                        disabled={currentStopIndex !== null && index <= currentStopIndex}
                         onDelete={handleDelete(index)}
                     />
                 )),

@@ -5,7 +5,7 @@ import { tokenCookie } from "../../../cookies";
 import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
-import { getCurrentStation, getNextTrain, moveToNextStation } from "../../../utils";
+import { getCurrentStation, getNextTrain, moveToNextStation, storedTrailToTrail } from "../../../utils";
 import TrailProgress from "../../../components/trailProgress";
 
 function userCanUpdate(id: string, userTrails: any[]) {
@@ -34,12 +34,8 @@ async function progressLoader({
         return { trailNotStarted: true };
     }
 
-    const trail = {
-        ...storedTrail,
-        stops: Object.values(storedTrail.stops),
-    };
-
-    return { station: getCurrentStation(trail)?.name, nextTrain: getNextTrain(trail, new Date()) };
+    const trail = storedTrailToTrail(storedTrail);
+    return { station: getCurrentStation(trail), nextTrain: getNextTrain(trail, new Date()) };
 }
 
 export const loader = (args: any) =>
@@ -56,13 +52,13 @@ const updateProgressAction: ActionFunction = async ({
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
     const { id } = params;
     const body = new URLSearchParams(await request.text());
-    const action = body.get("action");
+    const updateAction = body.get("action");
     const updateForStopIndex = body.get("stopIndex");
     const updateForTime = body.get("dateTime");
 
     const updateForStop = updateForStopIndex !== null ? `stop:${updateForStopIndex}` : "meeting";
 
-    if (!action || !updateForStop || !updateForTime) {
+    if (!updateAction || !updateForStop || !updateForTime) {
         return json(null, { status: 400 });
     }
 
@@ -74,16 +70,15 @@ const updateProgressAction: ActionFunction = async ({
         return json(null, { status: 404 });
     }
 
-    const trail = {
-        ...storedTrail,
-        stops: Object.values(storedTrail.stops),
-        progressUpdates: storedTrail.progressUpdates ? Object.values(storedTrail.progressUpdates) : [],
-    };
-    const update = action === "missed" ? trail : moveToNextStation(trail);
+    const trail = storedTrailToTrail(storedTrail);
+    const update = updateAction === "missed" ? trail : moveToNextStation(trail);
 
-    const updated = await updateProgress(id, "meeting", "2021-10-30", () => ({
+    const updated = await updateProgress(id, updateForStop, updateForTime, () => ({
         ...update,
-        progressUpdates: [...trail.progressUpdates, { stop: updateForStop, time: updateForTime, action }],
+        progressUpdates: [
+            ...(trail.progressUpdates || []),
+            { stop: updateForStop, time: updateForTime, action: updateAction },
+        ],
     }));
 
     return updated ? redirect(`/trail/${id}`) : null;
@@ -102,7 +97,7 @@ export default function Progress() {
     };
     return (
         <TrailProgress
-            station={station}
+            station={station?.name}
             nextTrain={nextTrain}
             trailNotStarted={trailNotStarted}
             onMoveToNextStation={handleMoveToNextStation}

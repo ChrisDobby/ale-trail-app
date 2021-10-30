@@ -7,7 +7,7 @@ import { getSession, commitSession } from "../../session";
 import { StoreLoaderArgs } from "../../store";
 import withStore from "../../withStore";
 import ViewTrail from "../../components/viewTrail";
-import { getCurrentStation } from "../../utils";
+import { getCurrentStation, storedTrailToTrail } from "../../utils";
 
 function canStartTrail(createdBy: string, meetingDateTime: string, userId: string, currentStop?: string) {
     return (
@@ -40,12 +40,7 @@ async function viewLoader({
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
     const user = await userResponse.json();
-    const storedTrail = await getTrail(params.id);
-
-    const trail = {
-        ...storedTrail,
-        stops: Object.values(storedTrail.stops),
-    };
+    const trail = storedTrailToTrail(await getTrail(params.id));
 
     return {
         trail,
