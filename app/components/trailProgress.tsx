@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import format from "date-fns/format";
 
 type TrailProgressProps = {
     station: string;
@@ -14,10 +15,25 @@ export default function TrailProgress({ station, nextTrain, trailNotStarted }: T
     const theme = useTheme();
 
     return (
-        <Stack sx={{ flexGrow: 1, bgcolor: theme.palette.action.disabledBackground }} spacing={2}>
+        <Stack sx={{ flexGrow: 1, bgcolor: theme.palette.action.disabledBackground }} spacing={4}>
             {trailNotStarted && (
                 <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
                     This trail has not started
+                </Typography>
+            )}
+
+            {station && (
+                <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
+                    {`At ${station} station`}
+                </Typography>
+            )}
+
+            {nextTrain.dateTime && (
+                <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
+                    {`${nextTrain.due ? " Did you catch" : "Next train is"} the ${format(
+                        new Date(nextTrain.dateTime),
+                        "HH:mm",
+                    )} to ${nextTrain.station}${nextTrain.due ? "?" : ""}`}
                 </Typography>
             )}
 
@@ -27,6 +43,17 @@ export default function TrailProgress({ station, nextTrain, trailNotStarted }: T
                         Go to your trails
                     </Button>
                 </Link>
+            )}
+
+            {nextTrain.due && (
+                <>
+                    <Button variant="contained" color="success">
+                        Yes we caught it
+                    </Button>
+                    <Button variant="contained" color="error">
+                        {"Fuck it, we'll get the next one"}
+                    </Button>
+                </>
             )}
         </Stack>
     );
