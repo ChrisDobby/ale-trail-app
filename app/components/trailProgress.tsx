@@ -9,13 +9,13 @@ import { Train } from "../types";
 
 type TrailProgressProps = {
     station: string;
-    nextTrain: Train;
+    nextTrain?: Train;
     trailNotStarted: boolean;
     onMoveToNextStation: () => void;
 };
 export default function TrailProgress({
     station,
-    nextTrain,
+    nextTrain = { index: 0, station: "", dateTime: "", due: false },
     trailNotStarted,
     onMoveToNextStation,
 }: TrailProgressProps) {
