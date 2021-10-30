@@ -60,3 +60,15 @@ export function storedTrailToTrail(storedTrail: any): Trail {
         progressUpdates: storedTrail.progressUpdates ? Object.values(storedTrail.progressUpdates) : [],
     };
 }
+
+export function getTimeOfNextTrain(
+    fromStationId: number,
+    toStationId: number,
+    afterDateTime: string,
+    trainNumber: number,
+) {
+    const after = new Date(afterDateTime);
+    after.setHours(after.getHours() + trainNumber);
+
+    return after.toISOString();
+}
