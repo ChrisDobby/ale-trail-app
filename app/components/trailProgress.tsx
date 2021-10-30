@@ -44,6 +44,12 @@ export default function TrailProgress({
                 </Typography>
             )}
 
+            {!trailNotStarted && !nextTrain.dateTime && (
+                <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
+                    This trail has finished
+                </Typography>
+            )}
+
             {(trailNotStarted || !nextTrain.due) && (
                 <Link to="/dashboard">
                     <Button variant="contained" color="success" startIcon={<KeyboardArrowLeftIcon />}>

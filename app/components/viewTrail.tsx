@@ -40,6 +40,8 @@ type ViewTrailProps = {
 export default function ViewTrail({ trail, canStart, canUpdateProgress, currentStation, onStart }: ViewTrailProps) {
     const theme = useTheme();
 
+    const isComplete = currentStation.stopIndex === trail.stops.length - 1;
+
     return (
         <Stack sx={{ flexGrow: 1, bgcolor: theme.palette.action.disabledBackground }} spacing={2}>
             <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
@@ -48,6 +50,11 @@ export default function ViewTrail({ trail, canStart, canUpdateProgress, currentS
             {currentStation.name && (
                 <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
                     {`Currently at ${currentStation.name}`}
+                </Typography>
+            )}
+            {isComplete && (
+                <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
+                    Trail has finished
                 </Typography>
             )}
             <Accordion>
@@ -63,20 +70,22 @@ export default function ViewTrail({ trail, canStart, canUpdateProgress, currentS
                     />
                 </AccordionDetails>
             </Accordion>
-            <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>Invite</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Invite id={trail.id} />
-                </AccordionDetails>
-            </Accordion>
+            {!isComplete && (
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography>Invite</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Invite id={trail.id} />
+                    </AccordionDetails>
+                </Accordion>
+            )}
             {canStart && (
                 <Button variant="contained" color="success" onClick={onStart} endIcon={<KeyboardArrowRightIcon />}>
                     Start the trail
                 </Button>
             )}
-            {canUpdateProgress && (
+            {canUpdateProgress && !isComplete && (
                 <Link to={`/trail/progress/${trail.id}`}>
                     <Button variant="contained" color="success" endIcon={<KeyboardArrowRightIcon />}>
                         Update progress
