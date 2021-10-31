@@ -1,4 +1,4 @@
-import { Stop, Trail, Train } from "./types";
+import { Stop, Trail, Train, ProgressUpdate } from "./types";
 
 export function getCurrentStation(trail: Trail) {
     switch (true) {
@@ -22,7 +22,7 @@ function nextTrainFromStop(index: number, stop: Stop, currentDateTime: Date): Tr
     return { index, dateTime: stop.dateTime, station: stop.to.name, due: currentDateTime > new Date(stop.dateTime) };
 }
 
-export function getNextTrain(trail: Trail, currentDateTime: Date) {
+export function getNextTrain(trail: Trail, currentDateTime: Date, getLastIfNotDue: boolean) {
     switch (true) {
         case !trail.currentStop:
             return { dateTime: "", station: "", due: false };
@@ -31,7 +31,10 @@ export function getNextTrain(trail: Trail, currentDateTime: Date) {
         case trail.currentStop?.startsWith("stop:"): {
             const [, stopNo] = (trail.currentStop as string).split(":");
             const nextStopIndex = Number(stopNo) + 1;
-            return nextTrainFromStop(nextStopIndex, trail.stops[nextStopIndex], currentDateTime);
+            const nextTrain = nextTrainFromStop(nextStopIndex, trail.stops[nextStopIndex], currentDateTime);
+            return getLastIfNotDue && !nextTrain.due && nextStopIndex > 0
+                ? nextTrainFromStop(nextStopIndex - 1, trail.stops[nextStopIndex - 1], currentDateTime)
+                : nextTrain;
         }
     }
 }
@@ -90,4 +93,52 @@ export function moveOnByTrain(trail: Trail): Trail {
     }
 
     return { ...trail, stops: updatedStops };
+}
+
+function getPreviousCurrentStop(trail: Trail) {
+    if (!trail.currentStop || trail.currentStop === "meeting") {
+        return trail.currentStop;
+    }
+
+    if (trail.currentStop === "stop:0") {
+        return "meeting";
+    }
+
+    const [, currentStopIndex] = trail.currentStop.split(":");
+    return `stop:${Number(currentStopIndex) - 1}`;
+}
+
+function removeProgressUpdate(trail: Trail, progressUpdate: ProgressUpdate): Trail {
+    return {
+        ...trail,
+        currentStop: getPreviousCurrentStop(trail),
+        stops: trail.stops.map((stop, index) => ({ ...stop, dateTime: progressUpdate.stopTimes[index] })),
+        progressUpdates: (trail.progressUpdates || []).filter(
+            update => update.stop !== progressUpdate.stop && update.time !== progressUpdate.time,
+        ),
+    };
+}
+export function prepareTrailForUpdate(
+    trail: Trail,
+    updateForStop: string,
+    updateForTime: string,
+    updateAction: string,
+    userId: string,
+): [boolean, Trail] {
+    const creatorUpdate = trail.createdBy === userId;
+    const existingProgressUpdate = trail.progressUpdates?.find(
+        update => update.stop === updateForStop && update.time === updateForTime,
+    );
+
+    switch (true) {
+        case (!creatorUpdate && existingProgressUpdate) ||
+            (creatorUpdate && existingProgressUpdate && existingProgressUpdate.action === updateAction):
+            return [false, trail];
+        case !existingProgressUpdate:
+            return [true, trail];
+        case creatorUpdate:
+            return [true, removeProgressUpdate(trail, existingProgressUpdate as ProgressUpdate)];
+        default:
+            return [false, trail];
+    }
 }

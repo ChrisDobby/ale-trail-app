@@ -40,12 +40,7 @@ export function create(db: Database): Store {
         return unexpiredLocks === {} ? null : unexpiredLocks;
     };
 
-    const updateProgress = async (
-        id: string,
-        updateForStop: string,
-        updateForTime: string,
-        getUpdatedTrail: () => Promise<Trail>,
-    ) => {
+    const updateProgress = async (id: string, getUpdatedTrail: (trail: Trail) => Promise<[boolean, Trail]>) => {
         const existingLock = await getExistingLock(id, new Date());
         if (existingLock) {
             return true;
@@ -59,11 +54,12 @@ export function create(db: Database): Store {
             if (!trail) {
                 return true;
             }
-            if (trail.progressUpdates?.find(update => update.stop === updateForStop && update.time === updateForTime)) {
+
+            const [updateRequired, updatedTrail] = await getUpdatedTrail(trail);
+            if (!updateRequired) {
                 return true;
             }
 
-            const updatedTrail = await getUpdatedTrail();
             const recheckLocks = (await get(child(ref(db), `/locks/${id}`))).toJSON();
             if (
                 !recheckLocks ||
