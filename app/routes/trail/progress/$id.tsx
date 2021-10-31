@@ -56,7 +56,7 @@ const updateProgressAction: ActionFunction = async ({
     const updateForStopIndex = body.get("stopIndex");
     const updateForTime = body.get("dateTime");
 
-    const updateForStop = updateForStopIndex !== null ? `stop:${updateForStopIndex}` : "meeting";
+    const updateForStop = updateForStopIndex !== "" ? `stop:${updateForStopIndex}` : "meeting";
 
     if (!updateAction || !updateForStop || !updateForTime) {
         return json(null, { status: 400 });
@@ -93,11 +93,17 @@ export default function Progress() {
     const submit = useSubmit();
 
     const handleMoveToNextStation = () => {
-        submit({ action: "next", stopIndex: station.stopIndex, dateTime: nextTrain.dateTime }, { method: "post" });
+        submit(
+            { action: "next", stopIndex: station.stopIndex || "", dateTime: nextTrain.dateTime },
+            { method: "post" },
+        );
     };
 
     const handleGetNextTrain = () => {
-        submit({ action: "missed", stopIndex: station.stopIndex, dateTime: nextTrain.dateTime }, { method: "post" });
+        submit(
+            { action: "missed", stopIndex: station.stopIndex || "", dateTime: nextTrain.dateTime },
+            { method: "post" },
+        );
     };
 
     return (
