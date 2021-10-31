@@ -12,11 +12,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import format from "date-fns/format";
 import { Stop, Meeting } from "../types";
 
-type StopItemProps = { stop: Stop; readOnly: boolean; onDelete: () => void };
-function StopItem({ stop, readOnly, onDelete }: StopItemProps) {
+type StopItemProps = { stop: Stop; readOnly: boolean; disabled: boolean; onDelete: () => void };
+function StopItem({ stop, readOnly, disabled, onDelete }: StopItemProps) {
     return (
         <ListItem
-            sx={{ bgcolor: "background.paper" }}
+            sx={{ bgcolor: "background.paper", opacity: disabled ? 0.3 : 1 }}
             secondaryAction={
                 !readOnly ? (
                     <IconButton edge="end" onClick={onDelete}>
@@ -42,16 +42,23 @@ type StopListProps = {
     stops: Stop[];
     meeting: Meeting;
     readOnly?: boolean;
+    currentStopIndex?: number | null;
     setSelectedStops?: (stops: Stop[]) => void;
 };
-export default function StopList({ stops, meeting, readOnly = false, setSelectedStops = () => {} }: StopListProps) {
+export default function StopList({
+    stops,
+    meeting,
+    readOnly = false,
+    currentStopIndex = null,
+    setSelectedStops = () => {},
+}: StopListProps) {
     const handleDelete = (index: number) => () => {
         setSelectedStops(stops.filter((_, stopIndex) => index !== stopIndex));
     };
 
     return (
         <List>
-            <ListItem sx={{ bgcolor: "background.paper" }}>
+            <ListItem sx={{ bgcolor: "background.paper", opacity: currentStopIndex !== null ? 0.3 : 1 }}>
                 <ListItemAvatar>
                     <Avatar>
                         <PeopleIcon />
@@ -65,6 +72,7 @@ export default function StopList({ stops, meeting, readOnly = false, setSelected
                     <StopItem
                         stop={stop}
                         readOnly={readOnly || index !== stops.length - 1}
+                        disabled={currentStopIndex !== null && index <= currentStopIndex}
                         onDelete={handleDelete(index)}
                     />
                 )),

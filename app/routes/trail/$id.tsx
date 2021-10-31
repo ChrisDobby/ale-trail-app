@@ -7,6 +7,7 @@ import { getSession, commitSession } from "../../session";
 import { StoreLoaderArgs } from "../../store";
 import withStore from "../../withStore";
 import ViewTrail from "../../components/viewTrail";
+import { getCurrentStation, storedTrailToTrail } from "../../utils";
 
 function canStartTrail(createdBy: string, meetingDateTime: string, userId: string, currentStop?: string) {
     return (
@@ -39,14 +40,14 @@ async function viewLoader({
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
     const user = await userResponse.json();
-    const storedTrail = await getTrail(params.id);
+    const trail = storedTrailToTrail(await getTrail(params.id));
 
-    const trail = {
-        ...storedTrail,
-        stops: Object.values(storedTrail.stops),
+    return {
+        trail,
+        canStart: canStartTrail(trail.createdBy, trail.meeting.dateTime, user.sub, trail.currentStop),
+        currentStation: getCurrentStation(trail),
+        canUpdateProgress: user.sub === trail.createdBy && trail.currentStop,
     };
-
-    return { trail, canStart: canStartTrail(trail.createdBy, trail.meeting.dateTime, user.sub, trail.currentStop) };
 }
 
 export const loader = (args: any) =>
@@ -79,7 +80,7 @@ export const action = (args: any) =>
     secure({ cookie: tokenCookie, getSession, commitSession, args }, withStore(startTrailAction));
 
 export default function View() {
-    const { trail, canStart } = useLoaderData();
+    const { trail, canStart, currentStation, canUpdateProgress } = useLoaderData();
 
     const submit = useSubmit();
 
@@ -87,5 +88,13 @@ export default function View() {
         submit(null, { method: "post" });
     };
 
-    return <ViewTrail trail={trail} canStart={canStart} onStart={handleStart} />;
+    return (
+        <ViewTrail
+            trail={trail}
+            canStart={canStart}
+            canUpdateProgress={canUpdateProgress}
+            currentStation={currentStation}
+            onStart={handleStart}
+        />
+    );
 }

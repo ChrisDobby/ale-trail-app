@@ -1,3 +1,4 @@
+import { Link } from "remix";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
@@ -29,35 +30,67 @@ function Invite({ id }: InviteProps) {
     );
 }
 
-type ViewTrailProps = { trail: Trail; canStart: boolean; onStart: () => void };
-export default function ViewTrail({ trail, canStart, onStart }: ViewTrailProps) {
+type ViewTrailProps = {
+    trail: Trail;
+    canStart: boolean;
+    canUpdateProgress: boolean;
+    currentStation: { stopIndex: number | null; name: string };
+    onStart: () => void;
+};
+export default function ViewTrail({ trail, canStart, canUpdateProgress, currentStation, onStart }: ViewTrailProps) {
     const theme = useTheme();
+
+    const isComplete = currentStation.stopIndex === trail.stops.length - 1;
 
     return (
         <Stack sx={{ flexGrow: 1, bgcolor: theme.palette.action.disabledBackground }} spacing={2}>
             <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
                 {format(new Date(trail.meeting.dateTime), "dd-MMM-yyyy HH:mm")}
             </Typography>
+            {currentStation.name && (
+                <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
+                    {`Currently at ${currentStation.name}`}
+                </Typography>
+            )}
+            {isComplete && (
+                <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
+                    Trail has finished
+                </Typography>
+            )}
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Details</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <StopList meeting={trail.meeting} stops={trail.stops} readOnly />
+                    <StopList
+                        meeting={trail.meeting}
+                        stops={trail.stops}
+                        readOnly
+                        currentStopIndex={currentStation.stopIndex}
+                    />
                 </AccordionDetails>
             </Accordion>
-            <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>Invite</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Invite id={trail.id} />
-                </AccordionDetails>
-            </Accordion>
+            {!isComplete && (
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography>Invite</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Invite id={trail.id} />
+                    </AccordionDetails>
+                </Accordion>
+            )}
             {canStart && (
                 <Button variant="contained" color="success" onClick={onStart} endIcon={<KeyboardArrowRightIcon />}>
                     Start the trail
                 </Button>
+            )}
+            {canUpdateProgress && !isComplete && (
+                <Link to={`/trail/progress/${trail.id}`}>
+                    <Button variant="contained" color="success" endIcon={<KeyboardArrowRightIcon />}>
+                        Update progress
+                    </Button>
+                </Link>
             )}
         </Stack>
     );
