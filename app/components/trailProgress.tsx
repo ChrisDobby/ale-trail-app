@@ -12,12 +12,14 @@ type TrailProgressProps = {
     nextTrain?: Train;
     trailNotStarted: boolean;
     onMoveToNextStation: () => void;
+    onGetNextTrain: () => void;
 };
 export default function TrailProgress({
     station,
     nextTrain = { index: 0, station: "", dateTime: "", due: false },
     trailNotStarted,
     onMoveToNextStation,
+    onGetNextTrain,
 }: TrailProgressProps) {
     const theme = useTheme();
 
@@ -63,7 +65,7 @@ export default function TrailProgress({
                     <Button variant="contained" color="success" onClick={onMoveToNextStation}>
                         Yes we caught it
                     </Button>
-                    <Button variant="contained" color="error">
+                    <Button variant="contained" color="error" onClick={onGetNextTrain}>
                         {"Fuck it, we'll get the next one"}
                     </Button>
                 </>

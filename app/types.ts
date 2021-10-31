@@ -1,6 +1,6 @@
 import type { AppLoadContext } from "remix";
 
-export type Station = { id: string; name: string };
+export type Station = { id: number; name: string };
 
 export type Stop = { from: Station; to: Station; dateTime: string };
 

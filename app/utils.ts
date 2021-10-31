@@ -72,3 +72,22 @@ export function getTimeOfNextTrain(
 
     return after.toISOString();
 }
+
+export function moveOnByTrain(trail: Trail): Trail {
+    const currentStation = getCurrentStation(trail);
+    if (!currentStation) {
+        return trail;
+    }
+
+    const moveFromStop = currentStation.stopIndex === null ? 0 : currentStation.stopIndex + 1;
+    const updatedStops = trail.stops.slice(0, moveFromStop);
+    let afterDateTime = trail.stops[moveFromStop].dateTime;
+    for (let i = moveFromStop; i < trail.stops.length; i += 1) {
+        const stop = trail.stops[i];
+        const timeOfNextTrain = getTimeOfNextTrain(stop.from.id, stop.to.id, afterDateTime, 1);
+        updatedStops.push({ ...stop, dateTime: timeOfNextTrain });
+        afterDateTime = timeOfNextTrain;
+    }
+
+    return { ...trail, stops: updatedStops };
+}

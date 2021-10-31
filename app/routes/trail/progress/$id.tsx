@@ -5,7 +5,7 @@ import { tokenCookie } from "../../../cookies";
 import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
-import { getCurrentStation, getNextTrain, moveToNextStation, storedTrailToTrail } from "../../../utils";
+import { getCurrentStation, getNextTrain, moveToNextStation, moveOnByTrain, storedTrailToTrail } from "../../../utils";
 import TrailProgress from "../../../components/trailProgress";
 
 function userCanUpdate(id: string, userTrails: any[]) {
@@ -71,7 +71,7 @@ const updateProgressAction: ActionFunction = async ({
     }
 
     const trail = storedTrailToTrail(storedTrail);
-    const update = updateAction === "missed" ? trail : moveToNextStation(trail);
+    const update = updateAction === "missed" ? moveOnByTrain(trail) : moveToNextStation(trail);
 
     const updated = await updateProgress(id, updateForStop, updateForTime, () => ({
         ...update,
@@ -95,12 +95,18 @@ export default function Progress() {
     const handleMoveToNextStation = () => {
         submit({ action: "next", stopIndex: station.stopIndex, dateTime: nextTrain.dateTime }, { method: "post" });
     };
+
+    const handleGetNextTrain = () => {
+        submit({ action: "missed", stopIndex: station.stopIndex, dateTime: nextTrain.dateTime }, { method: "post" });
+    };
+
     return (
         <TrailProgress
             station={station?.name}
             nextTrain={nextTrain}
             trailNotStarted={trailNotStarted}
             onMoveToNextStation={handleMoveToNextStation}
+            onGetNextTrain={handleGetNextTrain}
         />
     );
 }
