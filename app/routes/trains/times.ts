@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { json } from "remix";
 import { getTimeOfNextTrain } from "../../utils";
+import { StationId } from "../../types";
 
 export function loader({ request }: { request: Request }) {
     const search = request.url.slice(request.url.indexOf("?"));
@@ -15,6 +16,11 @@ export function loader({ request }: { request: Request }) {
 
     const trainNumberParam = searchParams.get("trainNumber");
     const trainNumber = trainNumberParam ? Number(trainNumberParam) : 1;
-    const dateTime = getTimeOfNextTrain(Number(fromParam), Number(toParam), afterParam, trainNumber);
+    const dateTime = getTimeOfNextTrain(
+        Number(fromParam) as StationId,
+        Number(toParam) as StationId,
+        afterParam,
+        trainNumber,
+    );
     return json({ dateTime, trainNumber });
 }

@@ -1,4 +1,5 @@
-import { Stop, Trail, Train, ProgressUpdate } from "./types";
+import { Stop, Trail, Train, ProgressUpdate, StationId } from "./types";
+import trainTimes from "./trainTimes";
 
 export function getCurrentStation(trail: Trail) {
     switch (true) {
@@ -65,15 +66,21 @@ export function storedTrailToTrail(storedTrail: any): Trail {
 }
 
 export function getTimeOfNextTrain(
-    fromStationId: number,
-    toStationId: number,
+    fromStationId: StationId,
+    toStationId: StationId,
     afterDateTime: string,
     trainNumber: number,
 ) {
+    const [datePart] = afterDateTime.split("T");
+    const times = trainTimes[fromStationId][toStationId].map(time => new Date(`${datePart}T${time}`));
     const after = new Date(afterDateTime);
-    after.setHours(after.getHours() + trainNumber);
+    const timesAfter = times.filter(time => time > after);
+    if (timesAfter.length === 0) {
+        return null;
+    }
 
-    return after.toISOString();
+    const timeAtNumber = timesAfter[trainNumber - 1];
+    return (timeAtNumber || timesAfter[timesAfter.length - 1]).toISOString();
 }
 
 export function moveOnByTrain(trail: Trail): Trail {
@@ -87,7 +94,16 @@ export function moveOnByTrain(trail: Trail): Trail {
     let afterDateTime = trail.stops[moveFromStop].dateTime;
     for (let i = moveFromStop; i < trail.stops.length; i += 1) {
         const stop = trail.stops[i];
-        const timeOfNextTrain = getTimeOfNextTrain(stop.from.id, stop.to.id, afterDateTime, 1);
+        const timeOfNextTrain = getTimeOfNextTrain(
+            stop.from.id as StationId,
+            stop.to.id as StationId,
+            afterDateTime,
+            1,
+        );
+        if (!timeOfNextTrain) {
+            break;
+        }
+
         updatedStops.push({ ...stop, dateTime: timeOfNextTrain });
         afterDateTime = timeOfNextTrain;
     }
