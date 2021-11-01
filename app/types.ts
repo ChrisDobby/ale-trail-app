@@ -38,3 +38,5 @@ export type StoreContext = AppLoadContext & { store: Store };
 export type AuthenticatedStoreContext = AuthenticatedContext & StoreContext;
 
 export type Train = { index: number; dateTime: string; station: string; due: boolean };
+
+export type StationId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
