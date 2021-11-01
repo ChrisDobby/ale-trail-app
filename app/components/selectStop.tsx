@@ -32,31 +32,37 @@ function StopEntry({ station, previousStation, previousTime, onSelectTime }: Sto
         load(`${loadUrl}&trainNumber=${trainNumber}`);
     };
 
+    const noTrainFound = station && type === "done" && data.dateTime === null;
     return (
         <Stack spacing={2} sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Typography variant="body1">{`${previousStation.name || ""} - ${station?.name || ""}`}</Typography>
-            <Stack direction="row" spacing={2}>
-                <Chip
-                    sx={{ minWidth: "5rem" }}
-                    label={type === "done" && station ? format(new Date(data.dateTime), "HH:mm") : ""}
-                />
-                <Button
-                    disabled={!station || data?.trainNumber === 1}
-                    startIcon={<ArrowLeftIcon />}
-                    onClick={handleTimeChange(-1)}
-                >
-                    Earlier
-                </Button>
-                <Button disabled={!station} endIcon={<ArrowRightIcon />} onClick={handleTimeChange(1)}>
-                    Later
-                </Button>
-            </Stack>
+            {noTrainFound && (
+                <Typography variant="body1">{`There are no trains direct from ${previousStation.name} to ${station.name}. You might need to go via Huddersfield or Stalybridge`}</Typography>
+            )}
+            {!noTrainFound && (
+                <Stack direction="row" spacing={2}>
+                    <Chip
+                        sx={{ minWidth: "5rem" }}
+                        label={type === "done" && station ? format(new Date(data.dateTime), "HH:mm") : ""}
+                    />
+                    <Button
+                        disabled={!station || data?.trainNumber === 1}
+                        startIcon={<ArrowLeftIcon />}
+                        onClick={handleTimeChange(-1)}
+                    >
+                        Earlier
+                    </Button>
+                    <Button disabled={!station} endIcon={<ArrowRightIcon />} onClick={handleTimeChange(1)}>
+                        Later
+                    </Button>
+                </Stack>
+            )}
             <Button
                 startIcon={<AddIcon />}
                 color="success"
                 variant="contained"
                 onClick={() => onSelectTime(data.dateTime)}
-                disabled={!station || type !== "done"}
+                disabled={!station || noTrainFound || type !== "done"}
             >
                 Add stop
             </Button>
