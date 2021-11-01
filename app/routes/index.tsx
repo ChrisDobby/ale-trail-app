@@ -1,6 +1,6 @@
 import { LoaderFunction, MetaFunction, redirect } from "remix";
 import Header from "../components/header";
-import ComingSoon from "../components/comingSoon";
+import Intro from "../components/intro";
 import { tokenCookie } from "../cookies";
 import { getAuth } from "../authentication";
 
@@ -24,7 +24,7 @@ export default function Index() {
     return (
         <>
             <Header />
-            <ComingSoon />
+            <Intro />
         </>
     );
 }
