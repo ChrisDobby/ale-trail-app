@@ -1,4 +1,4 @@
-import { useLoaderData, ActionFunction, redirect, json, useSubmit, useTransition } from "remix";
+import { useLoaderData, ActionFunction, json, useSubmit, useTransition, Form } from "remix";
 import type { MetaFunction } from "remix";
 import format from "date-fns/format";
 import { secure, AuthenticatedLoaderArgs, getUser } from "../../authentication";
@@ -69,7 +69,8 @@ const startTrailAction: ActionFunction = async ({
     const updatedTrail = { ...storedTrail, currentStop: "meeting" };
     await setTrail(id, updatedTrail);
 
-    return redirect("/dashboard");
+    return null;
+    // return redirect("/dashboard");
 };
 
 export const action = (args: any) =>
@@ -87,13 +88,15 @@ export default function View() {
     };
 
     return (
-        <ViewTrail
-            trail={trail}
-            canStart={canStart}
-            canUpdateProgress={canUpdateProgress}
-            currentStation={currentStation}
-            disabled={state === "submitting" || state === "loading"}
-            onStart={handleStart}
-        />
+        <Form forceRefresh>
+            <ViewTrail
+                trail={trail}
+                canStart={canStart}
+                canUpdateProgress={canUpdateProgress}
+                currentStation={currentStation}
+                disabled={state === "submitting" || state === "loading"}
+                onStart={handleStart}
+            />
+        </Form>
     );
 }
