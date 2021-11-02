@@ -70,7 +70,6 @@ const startTrailAction: ActionFunction = async ({
     await setTrail(id, updatedTrail);
 
     return null;
-    // return redirect("/dashboard");
 };
 
 export const action = (args: any) =>
@@ -88,7 +87,7 @@ export default function View() {
     };
 
     return (
-        <Form forceRefresh>
+        <Form reloadDocument>
             <ViewTrail
                 trail={trail}
                 canStart={canStart}
