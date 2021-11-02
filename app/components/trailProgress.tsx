@@ -53,8 +53,13 @@ export default function TrailProgress({
             )}
 
             {(trailNotStarted || !nextTrain.due) && (
-                <Link to="/dashboard" prefetch="intent">
-                    <Button variant="contained" color="success" startIcon={<KeyboardArrowLeftIcon />}>
+                <Link to="/dashboard" prefetch="intent" style={{ textDecoration: "none" }}>
+                    <Button
+                        sx={{ width: "100%" }}
+                        variant="contained"
+                        color="success"
+                        startIcon={<KeyboardArrowLeftIcon />}
+                    >
                         Go to your trails
                     </Button>
                 </Link>

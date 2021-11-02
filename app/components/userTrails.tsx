@@ -32,7 +32,7 @@ export default function UserTrails({ trails }: UserTrailsProps) {
                         key={trail.id}
                         sx={{ bgcolor: "background.paper" }}
                         secondaryAction={
-                            <Link to={`/trail/${trail.id}`} prefetch="intent">
+                            <Link to={`/trail/${trail.id}`} prefetch="intent" style={{ textDecoration: "none" }}>
                                 <IconButton>
                                     <KeyboardArrowRightIcon />
                                 </IconButton>

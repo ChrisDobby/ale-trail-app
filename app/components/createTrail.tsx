@@ -71,7 +71,7 @@ export default function CreateTrail({ stations, onCreate }: CreateTrailProps) {
                     </Button>
                 }
                 backButton={
-                    <Link to="/dashboard" prefetch="intent">
+                    <Link to="/dashboard" prefetch="intent" style={{ textDecoration: "none" }}>
                         <Button size="small">Cancel</Button>
                     </Link>
                 }

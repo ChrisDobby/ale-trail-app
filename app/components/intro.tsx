@@ -7,7 +7,7 @@ export default function Intro() {
             <Typography variant="h4" component="h1">
                 The ale trail planner
             </Typography>
-            <RemixLink to="/dashboard">
+            <RemixLink to="/dashboard" style={{ textDecoration: "none" }}>
                 <Button variant="contained" color="success">
                     Login
                 </Button>

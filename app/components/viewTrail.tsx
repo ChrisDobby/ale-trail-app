@@ -86,8 +86,13 @@ export default function ViewTrail({ trail, canStart, canUpdateProgress, currentS
                 </Button>
             )}
             {canUpdateProgress && !isComplete && (
-                <Link to={`/trail/progress/${trail.id}`} prefetch="intent">
-                    <Button variant="contained" color="success" endIcon={<KeyboardArrowRightIcon />}>
+                <Link to={`/trail/progress/${trail.id}`} prefetch="intent" style={{ textDecoration: "none" }}>
+                    <Button
+                        sx={{ width: "100%" }}
+                        variant="contained"
+                        color="success"
+                        endIcon={<KeyboardArrowRightIcon />}
+                    >
                         Update progress
                     </Button>
                 </Link>

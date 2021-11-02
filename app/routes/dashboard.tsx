@@ -60,7 +60,12 @@ export default function Dashboard() {
         <>
             <Header userProfile={user} />
             <UserTrails trails={trails} />
-            <Link to="/trail/create" className="bottom-right-button" prefetch="intent">
+            <Link
+                to="/trail/create"
+                className="bottom-right-button"
+                prefetch="intent"
+                style={{ textDecoration: "none" }}
+            >
                 <Button variant="contained" color="success" startIcon={<AddIcon />}>
                     Create new trail
                 </Button>
