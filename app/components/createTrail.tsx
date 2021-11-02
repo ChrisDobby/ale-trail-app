@@ -10,8 +10,8 @@ import { Station, Stop, Meeting } from "../types";
 const STEP_LABELS = ["Meeting details", "Select stops"];
 
 export type TrailToCreate = { meeting: Meeting; stops: Stop[] };
-type CreateTrailProps = { stations: Station[]; onCreate: (trail: TrailToCreate) => void };
-export default function CreateTrail({ stations, onCreate }: CreateTrailProps) {
+type CreateTrailProps = { stations: Station[]; disabled: boolean; onCreate: (trail: TrailToCreate) => void };
+export default function CreateTrail({ stations, disabled, onCreate }: CreateTrailProps) {
     const theme = useTheme();
     const [activeStep, setActiveStep] = useState(0);
     const [meeting, setMeeting] = useState<Meeting | null>(null);
@@ -64,7 +64,7 @@ export default function CreateTrail({ stations, onCreate }: CreateTrailProps) {
                     <Button
                         size="small"
                         onClick={activeStep === 0 ? handleNext : handleCreate}
-                        disabled={activeStep === 0 && !meeting}
+                        disabled={disabled || (activeStep === 0 && !meeting)}
                     >
                         {activeStep === 1 ? "Create" : "Next"}
                         {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
@@ -72,7 +72,9 @@ export default function CreateTrail({ stations, onCreate }: CreateTrailProps) {
                 }
                 backButton={
                     <Link to="/dashboard" prefetch="intent" style={{ textDecoration: "none" }}>
-                        <Button size="small">Cancel</Button>
+                        <Button size="small" disabled={disabled}>
+                            Cancel
+                        </Button>
                     </Link>
                 }
             />

@@ -1,4 +1,4 @@
-import { json, useLoaderData, useSubmit, ActionFunction, redirect } from "remix";
+import { json, useLoaderData, useSubmit, ActionFunction, redirect, useTransition } from "remix";
 import { UserTrail, Trail } from "../../../types";
 import { secure, AuthenticatedLoaderArgs, getUser } from "../../../authentication";
 import { tokenCookie } from "../../../cookies";
@@ -116,6 +116,8 @@ export default function Progress() {
 
     const submit = useSubmit();
 
+    const { state } = useTransition();
+
     const getStopIndexForSubmit = () => {
         if (typeof nextTrain.index === "undefined" || nextTrain.index === 0) {
             return "";
@@ -150,6 +152,7 @@ export default function Progress() {
             station={station?.name}
             nextTrain={nextTrain}
             trailNotStarted={trailNotStarted}
+            disabled={state === "submitting" || state === "loading"}
             onMoveToNextStation={handleMoveToNextStation}
             onGetNextTrain={handleGetNextTrain}
         />

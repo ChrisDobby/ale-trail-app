@@ -35,9 +35,17 @@ type ViewTrailProps = {
     canStart: boolean;
     canUpdateProgress: boolean;
     currentStation: { stopIndex: number | null; name: string };
+    disabled: boolean;
     onStart: () => void;
 };
-export default function ViewTrail({ trail, canStart, canUpdateProgress, currentStation, onStart }: ViewTrailProps) {
+export default function ViewTrail({
+    trail,
+    canStart,
+    canUpdateProgress,
+    currentStation,
+    disabled,
+    onStart,
+}: ViewTrailProps) {
     const theme = useTheme();
 
     const isComplete = currentStation.stopIndex === trail.stops.length - 1;
@@ -81,7 +89,13 @@ export default function ViewTrail({ trail, canStart, canUpdateProgress, currentS
                 </Accordion>
             )}
             {canStart && (
-                <Button variant="contained" color="success" onClick={onStart} endIcon={<KeyboardArrowRightIcon />}>
+                <Button
+                    variant="contained"
+                    color="success"
+                    disabled={disabled}
+                    onClick={onStart}
+                    endIcon={<KeyboardArrowRightIcon />}
+                >
                     Start the trail
                 </Button>
             )}
@@ -91,6 +105,7 @@ export default function ViewTrail({ trail, canStart, canUpdateProgress, currentS
                         sx={{ width: "100%" }}
                         variant="contained"
                         color="success"
+                        disabled={disabled}
                         endIcon={<KeyboardArrowRightIcon />}
                     >
                         Update progress

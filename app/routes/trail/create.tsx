@@ -1,4 +1,13 @@
-import { LoaderFunction, MetaFunction, ActionFunction, json, useLoaderData, useSubmit, redirect } from "remix";
+import {
+    LoaderFunction,
+    MetaFunction,
+    ActionFunction,
+    json,
+    useLoaderData,
+    useSubmit,
+    redirect,
+    useTransition,
+} from "remix";
 import { v4 as uuid } from "uuid";
 import CreateTrail, { TrailToCreate } from "../../components/createTrail";
 import trailStations from "../../stations";
@@ -51,9 +60,17 @@ export default function Create() {
 
     const submit = useSubmit();
 
+    const { state } = useTransition();
+
     const handleCreate = (trail: TrailToCreate) => {
         submit({ trail: JSON.stringify(trail) }, { method: "post" });
     };
 
-    return <CreateTrail stations={stations} onCreate={handleCreate} />;
+    return (
+        <CreateTrail
+            stations={stations}
+            disabled={state === "submitting" || state === "loading"}
+            onCreate={handleCreate}
+        />
+    );
 }

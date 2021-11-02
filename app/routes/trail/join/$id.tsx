@@ -1,4 +1,4 @@
-import { MetaFunction, useLoaderData, ActionFunction, redirect, json, useSubmit } from "remix";
+import { MetaFunction, useLoaderData, ActionFunction, redirect, json, useSubmit, useTransition } from "remix";
 import format from "date-fns/format";
 import { UserTrail } from "../../../types";
 import { secure, AuthenticatedLoaderArgs, getUser } from "../../../authentication";
@@ -68,9 +68,18 @@ export default function Join() {
 
     const submit = useSubmit();
 
+    const { state } = useTransition();
+
     const handleJoin = () => {
         submit(null, { method: "post" });
     };
 
-    return <JoinTrail trail={trail} canJoin={canJoin} onJoin={handleJoin} />;
+    return (
+        <JoinTrail
+            trail={trail}
+            canJoin={canJoin}
+            disabled={state === "submitting" || state === "loading"}
+            onJoin={handleJoin}
+        />
+    );
 }

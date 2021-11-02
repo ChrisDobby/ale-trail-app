@@ -1,4 +1,4 @@
-import { useLoaderData, ActionFunction, redirect, json, useSubmit } from "remix";
+import { useLoaderData, ActionFunction, redirect, json, useSubmit, useTransition } from "remix";
 import type { MetaFunction } from "remix";
 import format from "date-fns/format";
 import { secure, AuthenticatedLoaderArgs, getUser } from "../../authentication";
@@ -80,6 +80,8 @@ export default function View() {
 
     const submit = useSubmit();
 
+    const { state } = useTransition();
+
     const handleStart = () => {
         submit(null, { method: "post" });
     };
@@ -90,6 +92,7 @@ export default function View() {
             canStart={canStart}
             canUpdateProgress={canUpdateProgress}
             currentStation={currentStation}
+            disabled={state === "submitting" || state === "loading"}
             onStart={handleStart}
         />
     );
