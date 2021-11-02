@@ -21,7 +21,7 @@ export type UserTrail = {
     meeting: Meeting;
 };
 
-export type Auth = { access_token: string; refresh_token: string; expires_at: number };
+export type Auth = { access_token: string; refresh_token: string; id_token: string; expires_at: number };
 
 export type AuthenticatedContext = AppLoadContext & { auth: Auth; headers: HeadersInit };
 

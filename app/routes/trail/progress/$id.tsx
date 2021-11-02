@@ -1,6 +1,6 @@
 import { json, useLoaderData, useSubmit, ActionFunction, redirect } from "remix";
 import { UserTrail, Trail } from "../../../types";
-import { secure, AuthenticatedLoaderArgs, getAuthHeader, getUser } from "../../../authentication";
+import { secure, AuthenticatedLoaderArgs, getUser } from "../../../authentication";
 import { tokenCookie } from "../../../cookies";
 import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
@@ -23,14 +23,12 @@ function userCanUpdate(id: string, userTrails: any[]) {
 async function progressLoader({
     context: {
         auth,
-        headers,
         store: { getTrail, trailsForUser },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const { id } = params;
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const { sub } = await userResponse.json();
+    const { sub } = getUser(auth);
 
     const [storedTrail, storedUserTrails] = await Promise.all([getTrail(id), trailsForUser(sub)]);
     if (!userCanUpdate(id, storedUserTrails)) {
@@ -51,7 +49,6 @@ export const loader = (args: any) =>
 const updateProgressAction: ActionFunction = async ({
     request,
     context: {
-        headers,
         auth,
         store: { trailsForUser, updateProgress },
     },
@@ -69,8 +66,7 @@ const updateProgressAction: ActionFunction = async ({
         return json(null, { status: 400 });
     }
 
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const { sub } = await userResponse.json();
+    const { sub } = getUser(auth);
 
     const storedUserTrails = await trailsForUser(sub);
     if (!userCanUpdate(id, storedUserTrails)) {

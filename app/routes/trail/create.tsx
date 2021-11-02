@@ -2,7 +2,7 @@ import { LoaderFunction, MetaFunction, ActionFunction, json, useLoaderData, useS
 import { v4 as uuid } from "uuid";
 import CreateTrail, { TrailToCreate } from "../../components/createTrail";
 import trailStations from "../../stations";
-import { secure, getUser, getAuthHeader, AuthenticatedLoaderArgs } from "../../authentication";
+import { secure, getUser, AuthenticatedLoaderArgs } from "../../authentication";
 import { tokenCookie } from "../../cookies";
 import { getSession, commitSession } from "../../session";
 import withStore from "../../withStore";
@@ -15,7 +15,6 @@ export const loader: LoaderFunction = () => {
 const createTrailAction: ActionFunction = async ({
     request,
     context: {
-        headers,
         auth,
         store: { setTrail, addTrailToUser },
     },
@@ -27,8 +26,7 @@ const createTrailAction: ActionFunction = async ({
     }
 
     const trail = JSON.parse(trailParam);
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const { sub } = await userResponse.json();
+    const { sub } = getUser(auth);
     const id = uuid();
 
     await Promise.all([

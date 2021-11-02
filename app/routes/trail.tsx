@@ -2,11 +2,11 @@ import { MetaFunction, useLoaderData } from "remix";
 import { Outlet } from "react-router-dom";
 import Header from "../components/header";
 import { tokenCookie } from "../cookies";
-import { secure, getAuthHeader, getUser, AuthenticatedLoaderArgs } from "../authentication";
+import { secure, getUser, AuthenticatedLoaderArgs } from "../authentication";
 import { getSession, commitSession } from "../session";
 
-function dashboardLoader({ context: { auth, headers } }: AuthenticatedLoaderArgs) {
-    return getUser({ ...headers, ...getAuthHeader(auth) });
+function dashboardLoader({ context: { auth } }: AuthenticatedLoaderArgs) {
+    return getUser(auth);
 }
 
 export const loader = (args: any) => secure({ cookie: tokenCookie, getSession, commitSession, args }, dashboardLoader);

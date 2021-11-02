@@ -1,6 +1,7 @@
 import { redirect } from "remix";
 import type { Cookie, Session, LoaderFunction, AppLoadContext } from "remix";
 import { v4 as uuidv4 } from "uuid";
+import jwtDecode from "jwt-decode";
 import { tokenCookie } from "./cookies";
 import { Auth, AuthenticatedContext } from "./types";
 
@@ -48,8 +49,8 @@ export async function retrieveToken({ code, refreshToken, request }: RetrieveTok
     });
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { access_token, refresh_token, expires_in } = await authResponse.json();
-    return { access_token, refresh_token, expires_at: getSecondsSinceEpoch(new Date()) + expires_in };
+    const { access_token, refresh_token, id_token, expires_in } = await authResponse.json();
+    return { access_token, refresh_token, id_token, expires_at: getSecondsSinceEpoch(new Date()) + expires_in };
 }
 
 type SecureOptions = {
@@ -63,12 +64,8 @@ type SecureOptions = {
     };
 };
 
-export function getAuthHeader(auth: Auth) {
-    return { Authorization: `Bearer ${auth.access_token}` };
-}
-
-export function getUser(headers: HeadersInit) {
-    return fetch(`${AUTH_URL}/userinfo`, { headers });
+export function getUser(auth: Auth) {
+    return jwtDecode(auth.id_token) as any;
 }
 
 export async function logout(request: Request) {

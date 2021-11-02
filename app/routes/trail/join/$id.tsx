@@ -1,7 +1,7 @@
 import { MetaFunction, useLoaderData, ActionFunction, redirect, json, useSubmit } from "remix";
 import format from "date-fns/format";
 import { UserTrail } from "../../../types";
-import { secure, AuthenticatedLoaderArgs, getAuthHeader, getUser } from "../../../authentication";
+import { secure, AuthenticatedLoaderArgs, getUser } from "../../../authentication";
 import { tokenCookie } from "../../../cookies";
 import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
@@ -23,13 +23,11 @@ export const meta: MetaFunction = ({ data: { trail } }) => {
 async function joinLoader({
     context: {
         auth,
-        headers,
         store: { getTrail, trailsForUser },
     },
     params: { id },
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const user = await userResponse.json();
+    const user = getUser(auth);
     const [storedTrail, storedUserTrails] = await Promise.all([getTrail(id), trailsForUser(user.sub)]);
 
     const userTrails = Object.values(storedUserTrails) as UserTrail[];
@@ -43,15 +41,13 @@ export const loader = (args: any) =>
 
 const joinTrailAction: ActionFunction = async ({
     context: {
-        headers,
         auth,
         store: { trailsForUser, addTrailToUser, getTrail },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
     const { id } = params;
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const { sub } = await userResponse.json();
+    const { sub } = getUser(auth);
     const userTrails = Object.values(await trailsForUser(sub)) as UserTrail[];
 
     if (!canJoinTrail(id, userTrails)) {
