@@ -39,10 +39,16 @@ export default function UserTrails({ trails }: UserTrailsProps) {
                             </Link>
                         }
                     >
-                        <ListItemText
-                            secondary={trail.meeting.station.name}
-                            primary={format(new Date(trail.meeting.dateTime), "dd-MMM-yyyy HH:mm")}
-                        />
+                        <Link
+                            to={`/trail/${trail.id}`}
+                            prefetch="intent"
+                            style={{ textDecoration: "none", color: "inherit", flex: 1 }}
+                        >
+                            <ListItemText
+                                secondary={trail.meeting.station.name}
+                                primary={format(new Date(trail.meeting.dateTime), "dd-MMM-yyyy HH:mm")}
+                            />
+                        </Link>
                     </ListItem>
                 ))}
             </List>
