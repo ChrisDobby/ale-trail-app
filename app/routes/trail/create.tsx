@@ -38,12 +38,15 @@ const createTrailAction: ActionFunction = async ({
     const { sub } = getUser(auth);
     const id = uuid();
 
-    await Promise.all([
-        setTrail(id, { ...trail, id, createdBy: sub }),
-        addTrailToUser(sub, id, { id, meeting: trail.meeting }),
-    ]);
-
-    return redirect("/dashboard");
+    try {
+        await Promise.all([
+            setTrail(id, { ...trail, id, createdBy: sub }),
+            addTrailToUser(sub, id, { id, meeting: trail.meeting }),
+        ]);
+        return redirect(`/trail/${id}`);
+    } catch (e) {
+        return null;
+    }
 };
 
 export const action = (args: any) =>
