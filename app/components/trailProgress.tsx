@@ -53,7 +53,7 @@ export default function TrailProgress({
             )}
 
             {(trailNotStarted || !nextTrain.due) && (
-                <Link to="/dashboard">
+                <Link to="/dashboard" prefetch="intent">
                     <Button variant="contained" color="success" startIcon={<KeyboardArrowLeftIcon />}>
                         Go to your trails
                     </Button>
