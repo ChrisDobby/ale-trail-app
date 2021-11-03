@@ -68,9 +68,12 @@ export function ErrorBoundary({ error }: { error: Error }) {
 
     return (
         <Document title="Uh-oh!">
-            <h1>App Error</h1>
-            <pre>{error.message}</pre>
-            <p>Replace this UI with what you want users to see when your app throws uncaught errors.</p>
+            <div style={{ width: "100%", textAlign: "center" }}>
+                <h1>Application Error</h1>
+                <h2>Something went a bit wrong</h2>
+                <h3>Probably best to hit refresh and try again</h3>
+                <h3>If you still have a problem then just relax and have a 🍻🍻🍻</h3>
+            </div>
         </Document>
     );
 }
