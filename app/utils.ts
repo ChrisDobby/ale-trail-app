@@ -69,7 +69,7 @@ export function getTimeOfNextTrain(
     fromStationId: StationId,
     toStationId: StationId,
     afterDateTime: string,
-    trainNumber: number,
+    trainNumber: number | null,
 ) {
     const [datePart] = afterDateTime.split("T");
     const times = trainTimes[fromStationId][toStationId].map(time => new Date(`${datePart}T${time}`));
@@ -79,8 +79,19 @@ export function getTimeOfNextTrain(
         return null;
     }
 
-    const timeAtNumber = timesAfter[trainNumber - 1];
-    return (timeAtNumber || timesAfter[timesAfter.length - 1]).toISOString();
+    if (trainNumber) {
+        const timeAtNumber = timesAfter[trainNumber - 1];
+        return { dateTime: (timeAtNumber || timesAfter[timesAfter.length - 1]).toISOString(), trainNumber };
+    }
+    let result: { dateTime: string; trainNumber: number } | null = null;
+    for (let i = 0; i < timesAfter.length; i += 1) {
+        if (timesAfter[i].getTime() > after.getTime() + 900000) {
+            result = { dateTime: timesAfter[i].toISOString(), trainNumber: i + 1 };
+            break;
+        }
+    }
+
+    return result || { dateTime: timesAfter[timesAfter.length - 1].toISOString(), trainNumber: timesAfter.length };
 }
 
 export function moveOnByTrain(trail: Trail): Trail {
@@ -104,8 +115,8 @@ export function moveOnByTrain(trail: Trail): Trail {
             break;
         }
 
-        updatedStops.push({ ...stop, dateTime: timeOfNextTrain });
-        afterDateTime = timeOfNextTrain;
+        updatedStops.push({ ...stop, dateTime: timeOfNextTrain.dateTime });
+        afterDateTime = timeOfNextTrain.dateTime;
     }
 
     return { ...trail, stops: updatedStops };
