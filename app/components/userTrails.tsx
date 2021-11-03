@@ -32,17 +32,23 @@ export default function UserTrails({ trails }: UserTrailsProps) {
                         key={trail.id}
                         sx={{ bgcolor: "background.paper" }}
                         secondaryAction={
-                            <Link to={`/trail/${trail.id}`}>
+                            <Link to={`/trail/${trail.id}`} prefetch="intent" style={{ textDecoration: "none" }}>
                                 <IconButton>
                                     <KeyboardArrowRightIcon />
                                 </IconButton>
                             </Link>
                         }
                     >
-                        <ListItemText
-                            secondary={trail.meeting.station.name}
-                            primary={format(new Date(trail.meeting.dateTime), "dd-MMM-yyyy HH:mm")}
-                        />
+                        <Link
+                            to={`/trail/${trail.id}`}
+                            prefetch="intent"
+                            style={{ textDecoration: "none", color: "inherit", flex: 1 }}
+                        >
+                            <ListItemText
+                                secondary={trail.meeting.station.name}
+                                primary={format(new Date(trail.meeting.dateTime), "dd-MMM-yyyy HH:mm")}
+                            />
+                        </Link>
                     </ListItem>
                 ))}
             </List>

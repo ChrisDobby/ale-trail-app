@@ -27,6 +27,7 @@ export default function MeetingDateTime({ stations, onMeetingSelect }: MeetingDa
             <DateTimePicker
                 label="Meeting date and time"
                 value={dateTime}
+                inputFormat="dd/MM/yyyy HH:mm"
                 onChange={handleDateChange}
                 renderInput={params => <TextField {...params} />}
             />

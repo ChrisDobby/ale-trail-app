@@ -1,7 +1,7 @@
-import { useLoaderData, ActionFunction, redirect, json, useSubmit } from "remix";
+import { useLoaderData, ActionFunction, json, useSubmit, useTransition, Form } from "remix";
 import type { MetaFunction } from "remix";
 import format from "date-fns/format";
-import { secure, AuthenticatedLoaderArgs, getAuthHeader, getUser } from "../../authentication";
+import { secure, AuthenticatedLoaderArgs, getUser } from "../../authentication";
 import { tokenCookie } from "../../cookies";
 import { getSession, commitSession } from "../../session";
 import { StoreLoaderArgs } from "../../store";
@@ -33,13 +33,11 @@ export const meta: MetaFunction = (params: any) => {
 async function viewLoader({
     context: {
         auth,
-        headers,
         store: { getTrail },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const user = await userResponse.json();
+    const user = getUser(auth);
     const trail = storedTrailToTrail(await getTrail(params.id));
 
     return {
@@ -55,15 +53,13 @@ export const loader = (args: any) =>
 
 const startTrailAction: ActionFunction = async ({
     context: {
-        headers,
         auth,
         store: { setTrail, getTrail },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
     const { id } = params;
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const { sub } = await userResponse.json();
+    const { sub } = getUser(auth);
     const storedTrail = await getTrail(id);
 
     if (!canStartTrail(storedTrail.createdBy, storedTrail.meeting.dateTime, sub, storedTrail.currentStop)) {
@@ -73,7 +69,7 @@ const startTrailAction: ActionFunction = async ({
     const updatedTrail = { ...storedTrail, currentStop: "meeting" };
     await setTrail(id, updatedTrail);
 
-    return redirect("/dashboard");
+    return null;
 };
 
 export const action = (args: any) =>
@@ -84,17 +80,22 @@ export default function View() {
 
     const submit = useSubmit();
 
+    const { state } = useTransition();
+
     const handleStart = () => {
         submit(null, { method: "post" });
     };
 
     return (
-        <ViewTrail
-            trail={trail}
-            canStart={canStart}
-            canUpdateProgress={canUpdateProgress}
-            currentStation={currentStation}
-            onStart={handleStart}
-        />
+        <Form reloadDocument>
+            <ViewTrail
+                trail={trail}
+                canStart={canStart}
+                canUpdateProgress={canUpdateProgress}
+                currentStation={currentStation}
+                disabled={state === "submitting" || state === "loading"}
+                onStart={handleStart}
+            />
+        </Form>
     );
 }

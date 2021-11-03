@@ -11,6 +11,7 @@ type TrailProgressProps = {
     station: string;
     nextTrain?: Train;
     trailNotStarted: boolean;
+    disabled: boolean;
     onMoveToNextStation: () => void;
     onGetNextTrain: () => void;
 };
@@ -18,6 +19,7 @@ export default function TrailProgress({
     station,
     nextTrain = { index: 0, station: "", dateTime: "", due: false },
     trailNotStarted,
+    disabled,
     onMoveToNextStation,
     onGetNextTrain,
 }: TrailProgressProps) {
@@ -53,8 +55,13 @@ export default function TrailProgress({
             )}
 
             {(trailNotStarted || !nextTrain.due) && (
-                <Link to="/dashboard">
-                    <Button variant="contained" color="success" startIcon={<KeyboardArrowLeftIcon />}>
+                <Link to="/dashboard" prefetch="intent" style={{ textDecoration: "none" }}>
+                    <Button
+                        sx={{ width: "100%" }}
+                        variant="contained"
+                        color="success"
+                        startIcon={<KeyboardArrowLeftIcon />}
+                    >
                         Go to your trails
                     </Button>
                 </Link>
@@ -62,10 +69,10 @@ export default function TrailProgress({
 
             {nextTrain.due && (
                 <>
-                    <Button variant="contained" color="success" onClick={onMoveToNextStation}>
+                    <Button variant="contained" color="success" disabled={disabled} onClick={onMoveToNextStation}>
                         Yes we caught it
                     </Button>
-                    <Button variant="contained" color="error" onClick={onGetNextTrain}>
+                    <Button variant="contained" color="error" disabled={disabled} onClick={onGetNextTrain}>
                         {"Fuck it, we'll get the next one"}
                     </Button>
                 </>

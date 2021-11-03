@@ -1,8 +1,17 @@
-import { LoaderFunction, MetaFunction, ActionFunction, json, useLoaderData, useSubmit, redirect } from "remix";
+import {
+    LoaderFunction,
+    MetaFunction,
+    ActionFunction,
+    json,
+    useLoaderData,
+    useSubmit,
+    redirect,
+    useTransition,
+} from "remix";
 import { v4 as uuid } from "uuid";
 import CreateTrail, { TrailToCreate } from "../../components/createTrail";
 import trailStations from "../../stations";
-import { secure, getUser, getAuthHeader, AuthenticatedLoaderArgs } from "../../authentication";
+import { secure, getUser, AuthenticatedLoaderArgs } from "../../authentication";
 import { tokenCookie } from "../../cookies";
 import { getSession, commitSession } from "../../session";
 import withStore from "../../withStore";
@@ -15,7 +24,6 @@ export const loader: LoaderFunction = () => {
 const createTrailAction: ActionFunction = async ({
     request,
     context: {
-        headers,
         auth,
         store: { setTrail, addTrailToUser },
     },
@@ -27,16 +35,18 @@ const createTrailAction: ActionFunction = async ({
     }
 
     const trail = JSON.parse(trailParam);
-    const userResponse = await getUser({ ...headers, ...getAuthHeader(auth) });
-    const { sub } = await userResponse.json();
+    const { sub } = getUser(auth);
     const id = uuid();
 
-    await Promise.all([
-        setTrail(id, { ...trail, id, createdBy: sub }),
-        addTrailToUser(sub, id, { id, meeting: trail.meeting }),
-    ]);
-
-    return redirect("/dashboard");
+    try {
+        await Promise.all([
+            setTrail(id, { ...trail, id, createdBy: sub }),
+            addTrailToUser(sub, id, { id, meeting: trail.meeting }),
+        ]);
+        return redirect(`/trail/${id}`);
+    } catch (e) {
+        return null;
+    }
 };
 
 export const action = (args: any) =>
@@ -53,9 +63,17 @@ export default function Create() {
 
     const submit = useSubmit();
 
+    const { state } = useTransition();
+
     const handleCreate = (trail: TrailToCreate) => {
         submit({ trail: JSON.stringify(trail) }, { method: "post" });
     };
 
-    return <CreateTrail stations={stations} onCreate={handleCreate} />;
+    return (
+        <CreateTrail
+            stations={stations}
+            disabled={state === "submitting" || state === "loading"}
+            onCreate={handleCreate}
+        />
+    );
 }

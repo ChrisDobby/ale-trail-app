@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem } from 
 import { MouseEventHandler, useState, useCallback } from "react";
 import { Link } from "remix";
 import { useNavigate } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
 import SelectTheme from "./selectTheme";
 
 type HeaderProps = { userProfile?: { picture: string; name: string } };
@@ -26,9 +27,11 @@ export default function Header({ userProfile }: HeaderProps) {
     return (
         <AppBar position="sticky">
             <Toolbar>
-                <Typography sx={{ marginRight: "0.5rem" }} variant="h4">
-                    🍻🚉
-                </Typography>
+                <Link to="/" style={{ textDecoration: "none", marginRight: "0.5rem" }}>
+                    <IconButton>
+                        <HomeIcon />
+                    </IconButton>
+                </Link>
                 <SelectTheme />
                 <div style={{ flexGrow: 1 }} />
                 {!isAuthenticated && (

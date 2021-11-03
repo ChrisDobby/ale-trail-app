@@ -15,12 +15,13 @@ export function loader({ request }: { request: Request }) {
     }
 
     const trainNumberParam = searchParams.get("trainNumber");
-    const trainNumber = trainNumberParam ? Number(trainNumberParam) : 1;
-    const dateTime = getTimeOfNextTrain(
+    const trainNumber = trainNumberParam ? Number(trainNumberParam) : null;
+    const timeAndNumber = getTimeOfNextTrain(
         Number(fromParam) as StationId,
         Number(toParam) as StationId,
         afterParam,
         trainNumber,
     );
-    return json({ dateTime, trainNumber });
+
+    return json(timeAndNumber);
 }

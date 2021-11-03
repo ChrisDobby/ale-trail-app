@@ -7,8 +7,8 @@ import format from "date-fns/format";
 import { Trail } from "../types";
 import StopList from "./stopList";
 
-type JoinTrailProps = { trail: Trail; canJoin: boolean; onJoin: () => void };
-export default function JoinTrail({ trail, canJoin, onJoin }: JoinTrailProps) {
+type JoinTrailProps = { trail: Trail; canJoin: boolean; disabled: boolean; onJoin: () => void };
+export default function JoinTrail({ trail, canJoin, disabled, onJoin }: JoinTrailProps) {
     const theme = useTheme();
 
     return (
@@ -17,7 +17,13 @@ export default function JoinTrail({ trail, canJoin, onJoin }: JoinTrailProps) {
                 {format(new Date(trail.meeting.dateTime), "dd-MMM-yyyy HH:mm")}
             </Typography>
             {canJoin && (
-                <Button variant="contained" color="success" onClick={onJoin} endIcon={<KeyboardArrowRightIcon />}>
+                <Button
+                    variant="contained"
+                    color="success"
+                    disabled={disabled}
+                    onClick={onJoin}
+                    endIcon={<KeyboardArrowRightIcon />}
+                >
                     Join the trail
                 </Button>
             )}
