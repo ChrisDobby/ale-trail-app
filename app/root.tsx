@@ -6,7 +6,6 @@ import DateAdapter from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 
 import stylesUrl from "./styles/global.css";
-import "@emotion/styled";
 
 export const links: LinksFunction = () => {
     return [{ rel: "stylesheet", href: stylesUrl }];
