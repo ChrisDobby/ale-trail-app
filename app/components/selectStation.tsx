@@ -2,7 +2,6 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import { SelectChangeEvent } from "@mui/material";
 import { Station } from "../types";
 
 type SelectStationProps = {
@@ -19,8 +18,8 @@ export default function SelectStation({
     label,
     onSelect,
 }: SelectStationProps) {
-    const handleStationSelect = (event: SelectChangeEvent<string>) =>
-        onSelect(stations.find(({ id }) => id === event.target.value));
+    const handleStationSelect = (event: { target: { value: string } }) =>
+        onSelect(stations.find(({ id }) => id === Number(event.target.value)));
     const disabledStationIds = disabledStations.map(({ id }) => id);
     return (
         <FormControl fullWidth>
@@ -30,7 +29,7 @@ export default function SelectStation({
                 sx={{ flexGrow: 1 }}
                 labelId="select-station-label"
                 label={label}
-                value={station?.id || "__blank__"}
+                value={station?.id?.toString() || "__blank__"}
                 onChange={handleStationSelect}
             >
                 <MenuItem value="__blank__" />
