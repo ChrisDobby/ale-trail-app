@@ -1,5 +1,8 @@
 import { Link as RemixLink } from "remix";
-import { Typography, Button, Link, Stack } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
+import Stack from "@mui/material/Stack";
 
 export default function Intro() {
     return (
