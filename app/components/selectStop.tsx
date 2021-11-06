@@ -32,7 +32,7 @@ function StopEntry({ station, previousStation, previousTime, onSelectTime }: Sto
         load(`${loadUrl}&trainNumber=${trainNumber}`);
     };
 
-    const noTrainFound = station && type === "done" && data.dateTime === null;
+    const noTrainFound = station && type === "done" && (!data || data.dateTime === null);
     return (
         <Stack spacing={2} sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Typography variant="body1">{`${previousStation.name || ""} - ${station?.name || ""}`}</Typography>
