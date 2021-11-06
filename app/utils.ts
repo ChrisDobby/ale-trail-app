@@ -198,3 +198,10 @@ export function prepareTrailForUpdate(
 export function getVerificationCode() {
     return Math.floor(Math.random() * 10000).toString();
 }
+
+export function getMaskedPhoneNumber(phoneNumber: string) {
+    const numberOfAsterisks = phoneNumber.length - 3;
+    return `${Array.from({ length: numberOfAsterisks })
+        .map(() => "*")
+        .join("")}${phoneNumber.substring(phoneNumber.length - 3)}`;
+}

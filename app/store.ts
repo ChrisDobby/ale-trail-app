@@ -77,6 +77,16 @@ export function create(db: Database): Store {
         return true;
     };
 
+    const addPhoneNumberToTrail = async (trailId: string, phoneNumber: string) => {
+        const currentNumbers = Object.values(
+            (await (await get(child(ref(db), `messaging/${trailId}`))).toJSON()) || {},
+        );
+
+        currentNumbers.push(phoneNumber);
+
+        await set(ref(db, `messaging/${trailId}`), currentNumbers);
+    };
+
     return {
         setTrail,
         addTrailToUser: (userId: string, trailId: string, trail: UserTrail) =>
@@ -93,6 +103,7 @@ export function create(db: Database): Store {
             null,
         setPhoneNumberVerification: (userId: string, verification: PhoneNumberVerification) =>
             set(ref(db, `users/${userId}/numberVerification`), verification),
-        addPhoneNumberToTrail: (trailId: string, phoneNumber: string) => Promise.resolve(),
+        removePhoneNumberVerification: (userId: string) => remove(ref(db, `users/${userId}/numberVerification`)),
+        addPhoneNumberToTrail,
     };
 }

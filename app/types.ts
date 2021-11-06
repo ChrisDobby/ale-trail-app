@@ -48,6 +48,7 @@ export type Store = {
     setUserDetails: (userId: string, details: UserDetails) => Promise<any>;
     getPhoneNumberVerification: (userId: string) => Promise<PhoneNumberVerification | null>;
     setPhoneNumberVerification: (userId: string, verification: PhoneNumberVerification) => Promise<any>;
+    removePhoneNumberVerification: (userId: string) => Promise<any>;
     addPhoneNumberToTrail: (trailId: string, phoneNumber: string) => Promise<any>;
 };
 
