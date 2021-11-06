@@ -6,7 +6,7 @@ import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
 import PhoneNumberForm from "../../../components/phoneNumberForm";
-import { getVerificationCode } from "../../../utils";
+import { createPhoneNumberVerification } from "../../../utils";
 
 async function phoneNumberEntryLoader({
     context: {
@@ -47,16 +47,9 @@ const phoneNumberEntryAction: ActionFunction = async ({
         return redirect(`/trail/${id}`);
     }
 
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + 1);
-    const verificationCode = getVerificationCode();
+    const verification = createPhoneNumberVerification(phoneNumber, id);
     // send the code!!
-    await setPhoneNumberVerification(sub, {
-        phoneNumber,
-        verificationCode,
-        trailId: id,
-        expires: expiry.toISOString(),
-    });
+    await setPhoneNumberVerification(sub, verification);
 
     return redirect(`/trail/phoneNumberVerify/${id}`);
 };

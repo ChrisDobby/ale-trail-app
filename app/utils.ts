@@ -199,6 +199,18 @@ export function getVerificationCode() {
     return Math.floor(Math.random() * 10000).toString();
 }
 
+export function createPhoneNumberVerification(phoneNumber: string, trailId: string) {
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 1);
+    const verificationCode = getVerificationCode();
+    return {
+        phoneNumber,
+        verificationCode,
+        trailId,
+        expires: expiry.toISOString(),
+    };
+}
+
 export function getMaskedPhoneNumber(phoneNumber: string) {
     const numberOfAsterisks = phoneNumber.length - 3;
     return `${Array.from({ length: numberOfAsterisks })
