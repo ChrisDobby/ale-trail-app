@@ -194,3 +194,7 @@ export function prepareTrailForUpdate(
             return [false, trail];
     }
 }
+
+export function getVerificationCode() {
+    return Math.floor(Math.random() * 10000).toString();
+}

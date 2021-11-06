@@ -23,6 +23,17 @@ export type UserTrail = {
     meeting: Meeting;
 };
 
+export type UserDetails = {
+    phoneNumber: string;
+};
+
+export type PhoneNumberVerification = {
+    phoneNumber: string;
+    verificationCode: string;
+    expires: string;
+    trailId: string;
+};
+
 export type Auth = { access_token: string; refresh_token: string; id_token: string; expires_at: number };
 
 export type AuthenticatedContext = AppLoadContext & { auth: Auth; headers: HeadersInit };
@@ -33,6 +44,11 @@ export type Store = {
     addTrailToUser: (userId: string, trailId: string, trail: UserTrail) => Promise<any>;
     getTrail: (id: string) => Promise<Trail | null>;
     trailsForUser: (userId: string) => Promise<UserTrail[]>;
+    getUserDetails: (userId: string) => Promise<UserDetails | null>;
+    setUserDetails: (userId: string, details: UserDetails) => Promise<any>;
+    getPhoneNumberVerification: (userId: string) => Promise<PhoneNumberVerification | null>;
+    setPhoneNumberVerification: (userId: string, verification: PhoneNumberVerification) => Promise<any>;
+    addPhoneNumberToTrail: (trailId: string, phoneNumber: string) => Promise<any>;
 };
 
 export type StoreContext = AppLoadContext & { store: Store };

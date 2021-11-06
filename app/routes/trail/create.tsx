@@ -43,7 +43,7 @@ const createTrailAction: ActionFunction = async ({
             setTrail(id, { ...trail, id, createdBy: sub }),
             addTrailToUser(sub, id, { id, meeting: trail.meeting }),
         ]);
-        return redirect(`/trail/${id}`);
+        return redirect(`/trail/phoneNumberEntry/${id}`);
     } catch (e) {
         return null;
     }
