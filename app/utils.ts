@@ -205,3 +205,7 @@ export function getMaskedPhoneNumber(phoneNumber: string) {
         .map(() => "*")
         .join("")}${phoneNumber.substring(phoneNumber.length - 3)}`;
 }
+
+export function hasVerificationExpired(expiryDateTime: string, currentDateTime: Date) {
+    return new Date(expiryDateTime).getTime() < currentDateTime.getTime();
+}
