@@ -32,7 +32,7 @@ function StopItem({ stop, readOnly, disabled, onDelete }: StopItemProps) {
             </ListItemAvatar>
             <ListItemText
                 primary={`${stop.from.name} to ${stop.to.name}`}
-                secondary={format(new Date(stop.dateTime), "HH:mm")}
+                secondary={format(new Date(stop.times.depart), "HH:mm")}
             />
         </ListItem>
     );

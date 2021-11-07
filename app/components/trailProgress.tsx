@@ -17,7 +17,7 @@ type TrailProgressProps = {
 };
 export default function TrailProgress({
     station,
-    nextTrain = { index: 0, station: "", dateTime: "", due: false },
+    nextTrain = { index: 0, station: "", depart: "", arrive: "", due: false },
     trailNotStarted,
     disabled,
     onMoveToNextStation,
@@ -39,16 +39,16 @@ export default function TrailProgress({
                 </Typography>
             )}
 
-            {nextTrain.dateTime && (
+            {nextTrain.depart && (
                 <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
                     {`${nextTrain.due ? " Did you catch" : "Next train is"} the ${format(
-                        new Date(nextTrain.dateTime),
+                        new Date(nextTrain.depart),
                         "HH:mm",
                     )} to ${nextTrain.station}${nextTrain.due ? "?" : ""}`}
                 </Typography>
             )}
 
-            {!trailNotStarted && !nextTrain.dateTime && (
+            {!trailNotStarted && !nextTrain.depart && (
                 <Typography sx={{ bgcolor: "background.paper", padding: "0.5rem", textAlign: "center" }} variant="h6">
                     This trail has finished
                 </Typography>

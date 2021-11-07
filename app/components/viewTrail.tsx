@@ -15,7 +15,7 @@ import StopList from "./stopList";
 
 type InviteProps = { id: string };
 function Invite({ id }: InviteProps) {
-    const joinUrl = `https://ale-trail.chrisdobby.dev/trail/join/${id}`;
+    const joinUrl = `https://ale-trail.chrisdobby.dev/trail/${id}/join`;
     return (
         <Stack alignItems="center">
             <Typography sx={{ padding: "0.5rem", textAlign: "center" }} variant="body1">
@@ -100,7 +100,7 @@ export default function ViewTrail({
                 </Button>
             )}
             {canUpdateProgress && !isComplete && (
-                <Link to={`/trail/progress/${trail.id}`} prefetch="intent" style={{ textDecoration: "none" }}>
+                <Link to={`/trail/${trail.id}/progress`} prefetch="intent" style={{ textDecoration: "none" }}>
                     <Button
                         sx={{ width: "100%" }}
                         variant="contained"

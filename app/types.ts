@@ -2,7 +2,9 @@ import type { AppLoadContext } from "remix";
 
 export type Station = { id: number; name: string };
 
-export type Stop = { from: Station; to: Station; dateTime: string };
+export type TrainTimes = { depart: string; arrive: string };
+
+export type Stop = { from: Station; to: Station; times: TrainTimes };
 
 export type Meeting = { dateTime: string; station: Station };
 
@@ -37,6 +39,6 @@ export type StoreContext = AppLoadContext & { store: Store };
 
 export type AuthenticatedStoreContext = AuthenticatedContext & StoreContext;
 
-export type Train = { index: number; dateTime: string; station: string; due: boolean };
+export type Train = { index: number; depart: string; arrive: string; station: string; due: boolean };
 
 export type StationId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
