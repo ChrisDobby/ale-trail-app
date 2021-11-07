@@ -8,14 +8,14 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import format from "date-fns/format";
-import { Station, Stop, Meeting } from "../types";
+import { Station, Stop, Meeting, TrainTimes } from "../types";
 import SelectStation from "./selectStation";
 
 type StopEntryProps = {
     station?: Station;
     previousStation: Station;
     previousTime: string;
-    onSelectTime: (time: string) => void;
+    onSelectTime: (times: TrainTimes) => void;
 };
 function StopEntry({ station, previousStation, previousTime, onSelectTime }: StopEntryProps) {
     const { type, data, load } = useFetcher();
@@ -32,7 +32,7 @@ function StopEntry({ station, previousStation, previousTime, onSelectTime }: Sto
         load(`${loadUrl}&trainNumber=${trainNumber}`);
     };
 
-    const noTrainFound = station && type === "done" && (!data || data.dateTime === null);
+    const noTrainFound = station && type === "done" && (!data || data.depart === null);
     return (
         <Stack spacing={2} sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Typography variant="body1">{`${previousStation.name || ""} - ${station?.name || ""}`}</Typography>
@@ -43,7 +43,7 @@ function StopEntry({ station, previousStation, previousTime, onSelectTime }: Sto
                 <Stack direction="row" spacing={2}>
                     <Chip
                         sx={{ minWidth: "5rem" }}
-                        label={type === "done" && station ? format(new Date(data.dateTime), "HH:mm") : ""}
+                        label={type === "done" && station ? format(new Date(data.depart), "HH:mm") : ""}
                     />
                     <Button
                         disabled={!station || data?.trainNumber === 1}
@@ -61,7 +61,7 @@ function StopEntry({ station, previousStation, previousTime, onSelectTime }: Sto
                 startIcon={<AddIcon />}
                 color="success"
                 variant="contained"
-                onClick={() => onSelectTime(data.dateTime)}
+                onClick={() => onSelectTime({ depart: data.depart, arrive: data.arrive })}
                 disabled={!station || noTrainFound || type !== "done"}
             >
                 Add stop
@@ -75,9 +75,9 @@ export default function SelectStop({ stations, meeting, previousStop, onSelect }
     const [station, setStation] = useState<Station>();
 
     const previousStation = previousStop ? previousStop.to : meeting.station;
-    const handleSelectTime = (dateTime: string) => {
+    const handleSelectTime = (times: TrainTimes) => {
         if (station) {
-            onSelect({ from: previousStation, to: station, dateTime });
+            onSelect({ from: previousStation, to: station, times });
             setStation(undefined);
         }
     };
@@ -94,7 +94,7 @@ export default function SelectStop({ stations, meeting, previousStop, onSelect }
             <StopEntry
                 station={station}
                 previousStation={previousStation}
-                previousTime={previousStop ? previousStop.dateTime : meeting.dateTime}
+                previousTime={previousStop ? previousStop.times.arrive : meeting.dateTime}
                 onSelectTime={handleSelectTime}
             />
         </>

@@ -1,4 +1,4 @@
-import { Stop, Trail, Train, ProgressUpdate, StationId } from "./types";
+import { Stop, Trail, Train, ProgressUpdate, StationId, TrainTimes } from "./types";
 import trainTimes from "./trainTimes";
 
 export function getCurrentStation(trail: Trail) {
@@ -17,16 +17,16 @@ export function getCurrentStation(trail: Trail) {
 
 function nextTrainFromStop(index: number, stop: Stop, currentDateTime: Date): Train {
     if (!stop) {
-        return { index, dateTime: "", station: "", due: false };
+        return { index, depart: "", arrive: "", station: "", due: false };
     }
 
-    return { index, dateTime: stop.dateTime, station: stop.to.name, due: currentDateTime > new Date(stop.dateTime) };
+    return { index, ...stop.times, station: stop.to.name, due: currentDateTime > new Date(stop.times.depart) };
 }
 
 export function getNextTrain(trail: Trail, currentDateTime: Date, getLastIfNotDue: boolean) {
     switch (true) {
         case !trail.currentStop:
-            return { dateTime: "", station: "", due: false };
+            return { depart: "", arrive: "", station: "", due: false };
         case trail.currentStop === "meeting":
             return nextTrainFromStop(0, trail.stops[0], currentDateTime);
         case trail.currentStop?.startsWith("stop:"): {
@@ -70,28 +70,49 @@ export function getTimeOfNextTrain(
     toStationId: StationId,
     afterDateTime: string,
     trainNumber: number | null,
-) {
+): (TrainTimes & { trainNumber: number }) | null {
     const [datePart] = afterDateTime.split("T");
-    const times = trainTimes[fromStationId][toStationId].map(time => new Date(`${datePart}T${time}`));
+    const times = trainTimes[fromStationId][toStationId].map(({ depart, arrive }) => ({
+        depart: new Date(`${datePart}T${depart}`),
+        arrive: new Date(`${datePart}T${arrive}`),
+    }));
     const after = new Date(afterDateTime);
-    const timesAfter = times.filter(time => time > after);
+    after.setMinutes(after.getMinutes() + 5);
+    const timesAfter = times.filter(time => time.depart > after);
     if (timesAfter.length === 0) {
         return null;
     }
 
     if (trainNumber) {
         const timeAtNumber = timesAfter[trainNumber - 1];
-        return { dateTime: (timeAtNumber || timesAfter[timesAfter.length - 1]).toISOString(), trainNumber };
+        const { depart, arrive } = timeAtNumber || timesAfter[timesAfter.length - 1];
+        return {
+            depart: depart.toISOString(),
+            arrive: arrive.toISOString(),
+            trainNumber,
+        };
     }
-    let result: { dateTime: string; trainNumber: number } | null = null;
+
+    let result: (TrainTimes & { trainNumber: number }) | null = null;
     for (let i = 0; i < timesAfter.length; i += 1) {
-        if (timesAfter[i].getTime() > after.getTime() + 900000) {
-            result = { dateTime: timesAfter[i].toISOString(), trainNumber: i + 1 };
+        if (timesAfter[i].depart.getTime() > after.getTime() + 900000) {
+            result = {
+                depart: timesAfter[i].depart.toISOString(),
+                arrive: timesAfter[i].arrive.toISOString(),
+                trainNumber: i + 1,
+            };
             break;
         }
     }
 
-    return result || { dateTime: timesAfter[timesAfter.length - 1].toISOString(), trainNumber: timesAfter.length };
+    const lastTimes = timesAfter[timesAfter.length - 1];
+    return (
+        result || {
+            depart: lastTimes.depart.toISOString(),
+            arrive: lastTimes.arrive.toISOString(),
+            trainNumber: timesAfter.length,
+        }
+    );
 }
 
 export function moveOnByTrain(trail: Trail): Trail {
@@ -102,7 +123,7 @@ export function moveOnByTrain(trail: Trail): Trail {
 
     const moveFromStop = currentStation.stopIndex === null ? 0 : currentStation.stopIndex + 1;
     const updatedStops = trail.stops.slice(0, moveFromStop);
-    let afterDateTime = trail.stops[moveFromStop].dateTime;
+    let afterDateTime = trail.stops[moveFromStop].times.arrive;
     for (let i = moveFromStop; i < trail.stops.length; i += 1) {
         const stop = trail.stops[i];
         const timeOfNextTrain = getTimeOfNextTrain(
@@ -115,8 +136,8 @@ export function moveOnByTrain(trail: Trail): Trail {
             break;
         }
 
-        updatedStops.push({ ...stop, dateTime: timeOfNextTrain.dateTime });
-        afterDateTime = timeOfNextTrain.dateTime;
+        updatedStops.push({ ...stop, times: { arrive: timeOfNextTrain.arrive, depart: timeOfNextTrain.depart } });
+        afterDateTime = timeOfNextTrain.arrive;
     }
 
     return { ...trail, stops: updatedStops };

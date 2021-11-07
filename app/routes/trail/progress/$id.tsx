@@ -96,7 +96,7 @@ const updateProgressAction: ActionFunction = async ({
                         stop: updateForStop,
                         time: updateForTime,
                         action: updateAction,
-                        stopTimes: trail.stops.map(({ dateTime }) => dateTime),
+                        stopTimes: trail.stops.map(({ times }) => times),
                     },
                 ],
             },
@@ -130,7 +130,7 @@ export default function Progress() {
             {
                 action: "next",
                 stopIndex: getStopIndexForSubmit(),
-                dateTime: nextTrain.dateTime,
+                dateTime: nextTrain.depart,
             },
             { method: "post" },
         );
@@ -141,7 +141,7 @@ export default function Progress() {
             {
                 action: "missed",
                 stopIndex: getStopIndexForSubmit(),
-                dateTime: nextTrain.dateTime,
+                dateTime: nextTrain.depart,
             },
             { method: "post" },
         );
