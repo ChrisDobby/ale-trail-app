@@ -136,7 +136,12 @@ export function moveOnByTrain(trail: Trail): Trail {
             break;
         }
 
-        updatedStops.push({ ...stop, times: { arrive: timeOfNextTrain.arrive, depart: timeOfNextTrain.depart } });
+        const newStop =
+            new Date(timeOfNextTrain.depart) < new Date(stop.times.depart)
+                ? stop
+                : { ...stop, times: { arrive: timeOfNextTrain.arrive, depart: timeOfNextTrain.depart } };
+
+        updatedStops.push(newStop);
         afterDateTime = timeOfNextTrain.arrive;
     }
 
