@@ -79,12 +79,12 @@ export function create(db: Database): Store {
 
     const addPhoneNumberToTrail = async (trailId: string, phoneNumber: string) => {
         const currentNumbers = Object.values(
-            (await (await get(child(ref(db), `messaging/${trailId}`))).toJSON()) || {},
+            (await (await get(child(ref(db), `messaging/${trailId}/numbers`))).toJSON()) || {},
         );
 
         currentNumbers.push(phoneNumber);
 
-        await set(ref(db, `messaging/${trailId}`), currentNumbers);
+        await set(ref(db, `messaging/${trailId}/numbers`), currentNumbers);
     };
 
     return {
@@ -105,5 +105,17 @@ export function create(db: Database): Store {
             set(ref(db, `users/${userId}/numberVerification`), verification),
         removePhoneNumberVerification: (userId: string) => remove(ref(db, `users/${userId}/numberVerification`)),
         addPhoneNumberToTrail,
+        getPhoneNumbersForTrail: async (trailId: string) =>
+            Object.values(
+                await get(child(ref(db), `messaging/${trailId}/numbers`)).then(snapshot => snapshot.val() || []),
+            ),
+        setTrailMessageIds: (trailId: string, messageIds: string[]) =>
+            set(ref(db, `messaging/${trailId}/currentMessageIds`), messageIds),
+        getTrailMessageIds: async (trailId: string) =>
+            Object.values(
+                await get(child(ref(db), `messaging/${trailId}/currentMessageIds`)).then(
+                    snapshot => snapshot.val() || [],
+                ),
+            ),
     };
 }

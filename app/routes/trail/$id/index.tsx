@@ -8,6 +8,7 @@ import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
 import ViewTrail from "../../../components/viewTrail";
 import { getCurrentStation, storedTrailToTrail } from "../../../utils";
+import { sendTrainMessages } from "../../../messagingUtils";
 
 function canStartTrail(createdBy: string, meetingDateTime: string, userId: string, currentStop?: string) {
     return (
@@ -52,12 +53,10 @@ export const loader = (args: any) =>
     secure({ cookie: tokenCookie, getSession, commitSession, args }, withStore(viewLoader));
 
 const startTrailAction: ActionFunction = async ({
-    context: {
-        auth,
-        store: { setTrail, getTrail },
-    },
+    context: { auth, store },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
+    const { setTrail, getTrail } = store;
     const { id } = params;
     const { sub } = getUser(auth);
     const storedTrail = await getTrail(id);
@@ -68,6 +67,7 @@ const startTrailAction: ActionFunction = async ({
 
     const updatedTrail = { ...storedTrail, currentStop: "meeting" };
     await setTrail(id, updatedTrail);
+    await sendTrainMessages(updatedTrail, store);
 
     return null;
 };

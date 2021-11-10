@@ -9,6 +9,7 @@ import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
 import JoinTrail from "../../../components/joinTrail";
 import { storedTrailToTrail, createPhoneNumberVerification } from "../../../utils";
+import { sendVerificationMessage } from "../../../messagingUtils";
 
 function canJoinTrail(id: string, userTrails: UserTrail[]) {
     return !userTrails.map(trail => trail.id).includes(id);
@@ -83,7 +84,7 @@ const joinTrailAction: ActionFunction = async ({
     }
 
     const verification = createPhoneNumberVerification(phoneNumber, id);
-    // send the code!!
+    sendVerificationMessage(verification);
     await setPhoneNumberVerification(sub, verification);
 
     return redirect(`/trail/phoneNumberVerify/${id}`);
