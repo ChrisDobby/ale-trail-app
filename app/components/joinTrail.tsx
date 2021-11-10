@@ -11,6 +11,7 @@ import StopList from "./stopList";
 type JoinTrailProps = {
     trail: Trail;
     canJoin: boolean;
+    canMessage: boolean;
     disabled: boolean;
     phoneNumber?: string;
     onPhoneNumberChanged: (phoneNumber?: string) => void;
@@ -19,6 +20,7 @@ type JoinTrailProps = {
 export default function JoinTrail({
     trail,
     canJoin,
+    canMessage,
     disabled,
     phoneNumber,
     onPhoneNumberChanged,
@@ -33,20 +35,23 @@ export default function JoinTrail({
             </Typography>
             {canJoin && (
                 <>
-                    <div style={{ textAlign: "center" }}>
-                        <Typography sx={{ padding: "0.5rem" }} variant="body1">
-                            If you would like to receive SMS notifications of due trains please enter your mobile number
-                            below
-                        </Typography>
+                    {" "}
+                    {canMessage && (
+                        <div style={{ textAlign: "center" }}>
+                            <Typography sx={{ padding: "0.5rem" }} variant="body1">
+                                If you would like to receive SMS notifications of due trains please enter your mobile
+                                number below
+                            </Typography>
 
-                        <TextField
-                            sx={{ width: "20rem" }}
-                            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                            label="Mobile phone number"
-                            value={phoneNumber}
-                            onChange={e => onPhoneNumberChanged(e.currentTarget.value)}
-                        />
-                    </div>
+                            <TextField
+                                sx={{ width: "20rem" }}
+                                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                                label="Mobile phone number"
+                                value={phoneNumber}
+                                onChange={e => onPhoneNumberChanged(e.currentTarget.value)}
+                            />
+                        </div>
+                    )}
                     <Button
                         variant="contained"
                         color="success"

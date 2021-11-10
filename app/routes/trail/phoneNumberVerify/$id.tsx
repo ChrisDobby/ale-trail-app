@@ -1,6 +1,6 @@
 import { json, Form, ActionFunction, redirect, useLoaderData, useActionData } from "remix";
 import { useNavigate } from "react-router-dom";
-import { getMaskedPhoneNumber, hasVerificationExpired } from "../../../utils";
+import { getMaskedPhoneNumber, hasVerificationExpired, canMessage } from "../../../utils";
 import { AuthenticatedLoaderArgs, getUser, secure } from "../../../authentication";
 import { tokenCookie } from "../../../cookies";
 import { getSession, commitSession } from "../../../session";
@@ -24,6 +24,10 @@ const phoneNumberVerifyAction: ActionFunction = async ({
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
     const { id } = params;
     const { sub } = getUser(auth);
+    if (!canMessage(sub)) {
+        return redirect(`/trail/${id}`);
+    }
+
     const body = new URLSearchParams(await request.text());
     const code = body.get("verificationCode");
 
@@ -63,6 +67,10 @@ async function phoneNumberVerifyLoader({
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const { id } = params;
     const { sub } = getUser(auth);
+    if (!canMessage(sub)) {
+        return redirect(`/trail/${id}`);
+    }
+
     const verification = await getPhoneNumberVerification(sub);
     const codeAvailable = verification && !hasVerificationExpired(verification.expires, new Date());
 

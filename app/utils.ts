@@ -235,3 +235,7 @@ export function hasVerificationExpired(expiryDateTime: string, currentDateTime: 
 export function internationalPhoneNumber(phoneNumber: string) {
     return phoneNumber.replace(/^0/, "44");
 }
+
+export function canMessage(userId: string) {
+    return userId === process.env.USER_ID_FOR_MESSAGING;
+}

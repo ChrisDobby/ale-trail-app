@@ -6,7 +6,7 @@ import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
 import PhoneNumberForm from "../../../components/phoneNumberForm";
-import { createPhoneNumberVerification, internationalPhoneNumber } from "../../../utils";
+import { createPhoneNumberVerification, internationalPhoneNumber, canMessage } from "../../../utils";
 import { sendVerificationMessage } from "../../../messagingUtils";
 
 async function phoneNumberEntryLoader({
@@ -18,6 +18,9 @@ async function phoneNumberEntryLoader({
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const { id } = params;
     const { sub } = getUser(auth);
+    if (!canMessage(sub)) {
+        return redirect(`/trail/${id}`);
+    }
     const userDetails = await getUserDetails(sub);
     return json({ userDetails, id });
 }
@@ -35,6 +38,10 @@ const phoneNumberEntryAction: ActionFunction = async ({
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
     const { id } = params;
     const { sub } = getUser(auth);
+    if (!canMessage(sub)) {
+        return redirect(`/trail/${id}`);
+    }
+
     const body = new URLSearchParams(await request.text());
     const phoneNumberParam = body.get("phoneNumber");
     const userDetails = await getUserDetails(sub);
