@@ -17,7 +17,7 @@ export default function PhoneNumberForm({ initialNumber, onCancel }: PhoneNumber
     const theme = useTheme();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setCanSubmit(Boolean(e.currentTarget.value));
+        setCanSubmit(Boolean(e.currentTarget.value) && Number.isInteger(Number(e.currentTarget.value)));
     };
 
     return (

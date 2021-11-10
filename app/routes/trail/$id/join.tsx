@@ -8,7 +8,7 @@ import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
 import JoinTrail from "../../../components/joinTrail";
-import { storedTrailToTrail, createPhoneNumberVerification } from "../../../utils";
+import { storedTrailToTrail, createPhoneNumberVerification, internationalPhoneNumber } from "../../../utils";
 import { sendVerificationMessage } from "../../../messagingUtils";
 
 function canJoinTrail(id: string, userTrails: UserTrail[]) {
@@ -72,11 +72,12 @@ const joinTrailAction: ActionFunction = async ({
     await addTrailToUser(sub, id, { id, meeting: trail.meeting });
 
     const body = new URLSearchParams(await request.text());
-    const phoneNumber = body.get("phoneNumber");
-    if (!phoneNumber) {
+    const phoneNumberParam = body.get("phoneNumber");
+    if (!phoneNumberParam) {
         return redirect("/dashboard");
     }
 
+    const phoneNumber = internationalPhoneNumber(phoneNumberParam);
     const userDetails = await getUserDetails(sub);
     if (userDetails?.phoneNumber === phoneNumber) {
         await addPhoneNumberToTrail(id, phoneNumber);

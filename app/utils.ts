@@ -231,3 +231,7 @@ export function getMaskedPhoneNumber(phoneNumber: string) {
 export function hasVerificationExpired(expiryDateTime: string, currentDateTime: Date) {
     return new Date(expiryDateTime).getTime() < currentDateTime.getTime();
 }
+
+export function internationalPhoneNumber(phoneNumber: string) {
+    return phoneNumber.replace(/^0/, "44");
+}

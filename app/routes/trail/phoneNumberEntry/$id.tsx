@@ -6,7 +6,7 @@ import { getSession, commitSession } from "../../../session";
 import { StoreLoaderArgs } from "../../../store";
 import withStore from "../../../withStore";
 import PhoneNumberForm from "../../../components/phoneNumberForm";
-import { createPhoneNumberVerification } from "../../../utils";
+import { createPhoneNumberVerification, internationalPhoneNumber } from "../../../utils";
 import { sendVerificationMessage } from "../../../messagingUtils";
 
 async function phoneNumberEntryLoader({
@@ -36,13 +36,14 @@ const phoneNumberEntryAction: ActionFunction = async ({
     const { id } = params;
     const { sub } = getUser(auth);
     const body = new URLSearchParams(await request.text());
-    const phoneNumber = body.get("phoneNumber");
+    const phoneNumberParam = body.get("phoneNumber");
     const userDetails = await getUserDetails(sub);
 
-    if (!phoneNumber) {
+    if (!phoneNumberParam) {
         return null;
     }
 
+    const phoneNumber = internationalPhoneNumber(phoneNumberParam);
     if (userDetails?.phoneNumber === phoneNumber) {
         await addPhoneNumberToTrail(id, phoneNumber);
         return redirect(`/trail/${id}`);
