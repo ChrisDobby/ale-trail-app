@@ -51,8 +51,6 @@ export type Store = {
     removePhoneNumberVerification: (userId: string) => Promise<any>;
     addPhoneNumberToTrail: (trailId: string, phoneNumber: string) => Promise<any>;
     getPhoneNumbersForTrail: (trailId: string) => Promise<string[]>;
-    setTrailMessageIds: (trailId: string, messageIds: string[]) => Promise<any>;
-    getTrailMessageIds: (trailId: string) => Promise<string[]>;
 };
 
 export type StoreContext = AppLoadContext & { store: Store };

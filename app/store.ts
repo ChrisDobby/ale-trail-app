@@ -109,13 +109,5 @@ export function create(db: Database): Store {
             Object.values(
                 await get(child(ref(db), `messaging/${trailId}/numbers`)).then(snapshot => snapshot.val() || []),
             ),
-        setTrailMessageIds: (trailId: string, messageIds: string[]) =>
-            set(ref(db, `messaging/${trailId}/currentMessageIds`), messageIds),
-        getTrailMessageIds: async (trailId: string) =>
-            Object.values(
-                await get(child(ref(db), `messaging/${trailId}/currentMessageIds`)).then(
-                    snapshot => snapshot.val() || [],
-                ),
-            ),
     };
 }

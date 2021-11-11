@@ -74,7 +74,7 @@ const updateProgressAction: ActionFunction = async ({
 
     const sendNextStationMessages = (clearMessages: boolean) => async (trail: Trail) => {
         if (clearMessages) {
-            await clearTrailMessages(trail, store);
+            await clearTrailMessages();
         }
 
         sendTrainMessages(trail, store);
