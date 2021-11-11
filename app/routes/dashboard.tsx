@@ -71,7 +71,7 @@ export default function Dashboard() {
             {awaitingVerification && (
                 <Alert variant="filled" severity="warning">
                     You have not verified your phone number{" "}
-                    <Link to={`/trail/phoneNumberVerify/${awaitingVerification.trailId}`}>verify it now</Link>
+                    <Link to={`/trail/${awaitingVerification.trailId}/phoneNumberVerify`}>verify it now</Link>
                 </Alert>
             )}
             <UserTrails trails={trails} />

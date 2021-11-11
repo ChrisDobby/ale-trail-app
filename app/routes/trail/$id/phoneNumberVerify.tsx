@@ -75,7 +75,7 @@ async function phoneNumberVerifyLoader({
     const codeAvailable = verification && !hasVerificationExpired(verification.expires, new Date());
 
     if (!codeAvailable) {
-        redirect(`/trail/phoneNumberEntry/${id}`);
+        redirect(`/trail/${id}/phoneNumberEntry`);
     }
 
     return json({ phoneNumber: getMaskedPhoneNumber(verification.phoneNumber), id });
@@ -96,7 +96,7 @@ export default function PhoneNumberVerify() {
             <VerificationForm
                 phoneNumber={phoneNumber}
                 error={actionData?.error}
-                newCodeUrl={`/trail/phoneNumberEntry/${id}`}
+                newCodeUrl={`/trail/${id}/phoneNumberEntry`}
                 onCancel={() => navigate(`/trail/${id}`)}
             />
         </Form>

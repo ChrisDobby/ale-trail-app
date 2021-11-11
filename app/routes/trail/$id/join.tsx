@@ -44,7 +44,7 @@ async function joinLoader({
     const userTrails = Object.values(storedUserTrails) as UserTrail[];
     const trail = storedTrailToTrail(storedTrail);
 
-    return { trail, canJoin: canJoinTrail(id, userTrails), canMessage: canMessage(sub), userDetails };
+    return { trail, canJoin: canJoinTrail(id, userTrails), messagingEnabled: canMessage(user.sub), userDetails };
 }
 
 export const loader = (args: any) =>
@@ -97,14 +97,14 @@ const joinTrailAction: ActionFunction = async ({
     sendVerificationMessage(verification);
     await setPhoneNumberVerification(sub, verification);
 
-    return redirect(`/trail/phoneNumberVerify/${id}`);
+    return redirect(`/trail/${id}/phoneNumberVerify`);
 };
 
 export const action = (args: any) =>
     secure({ cookie: tokenCookie, getSession, commitSession, args }, withStore(joinTrailAction));
 
 export default function Join() {
-    const { trail, canJoin, canMessage, userDetails } = useLoaderData();
+    const { trail, canJoin, messagingEnabled, userDetails } = useLoaderData();
 
     const submit = useSubmit();
 
@@ -120,7 +120,7 @@ export default function Join() {
         <JoinTrail
             trail={trail}
             canJoin={canJoin}
-            canMessage={canMessage}
+            canMessage={messagingEnabled}
             disabled={state === "submitting" || state === "loading"}
             phoneNumber={phoneNumber}
             onJoin={handleJoin}

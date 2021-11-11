@@ -60,7 +60,7 @@ const phoneNumberEntryAction: ActionFunction = async ({
     sendVerificationMessage(verification);
     await setPhoneNumberVerification(sub, verification);
 
-    return redirect(`/trail/phoneNumberVerify/${id}`);
+    return redirect(`/trail/${id}/phoneNumberVerify`);
 };
 
 export const action = (args: any) =>
