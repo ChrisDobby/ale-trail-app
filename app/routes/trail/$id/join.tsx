@@ -44,7 +44,7 @@ async function joinLoader({
     const userTrails = Object.values(storedUserTrails) as UserTrail[];
     const trail = storedTrailToTrail(storedTrail);
 
-    return { trail, canJoin: canJoinTrail(id, userTrails), messagingEnabled: canMessage(user.sub), userDetails };
+    return { trail, canJoin: canJoinTrail(id, userTrails), messagingEnabled: canMessage(trail.createdBy), userDetails };
 }
 
 export const loader = (args: any) =>
@@ -76,7 +76,7 @@ const joinTrailAction: ActionFunction = async ({
     const trail = await getTrail(id);
     await addTrailToUser(sub, id, { id, meeting: trail.meeting });
 
-    if (!canMessage(sub)) {
+    if (!canMessage(trail.createdBy)) {
         return redirect("/dashboard");
     }
 

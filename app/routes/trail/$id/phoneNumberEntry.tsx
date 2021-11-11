@@ -12,13 +12,14 @@ import { sendVerificationMessage } from "../../../messagingUtils";
 async function phoneNumberEntryLoader({
     context: {
         auth,
-        store: { getUserDetails },
+        store: { getUserDetails, getTrail },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const { id } = params;
     const { sub } = getUser(auth);
-    if (!canMessage(sub)) {
+    const trail = await getTrail(id);
+    if (!canMessage(trail.createdBy)) {
         return redirect(`/trail/${id}`);
     }
     const userDetails = await getUserDetails(sub);
@@ -32,13 +33,14 @@ const phoneNumberEntryAction: ActionFunction = async ({
     request,
     context: {
         auth,
-        store: { getUserDetails, setPhoneNumberVerification, addPhoneNumberToTrail },
+        store: { getUserDetails, setPhoneNumberVerification, addPhoneNumberToTrail, getTrail },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
     const { id } = params;
     const { sub } = getUser(auth);
-    if (!canMessage(sub)) {
+    const trail = await getTrail(id);
+    if (!canMessage(trail.createdBy)) {
         return redirect(`/trail/${id}`);
     }
 

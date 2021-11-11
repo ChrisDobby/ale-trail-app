@@ -18,13 +18,15 @@ const phoneNumberVerifyAction: ActionFunction = async ({
             removePhoneNumberVerification,
             getUserDetails,
             setUserDetails,
+            getTrail,
         },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
     const { id } = params;
     const { sub } = getUser(auth);
-    if (!canMessage(sub)) {
+    const trail = await getTrail(id);
+    if (!canMessage(trail.createdBy)) {
         return redirect(`/trail/${id}`);
     }
 
@@ -61,13 +63,14 @@ export const action = (args: any) =>
 async function phoneNumberVerifyLoader({
     context: {
         auth,
-        store: { getPhoneNumberVerification },
+        store: { getPhoneNumberVerification, getTrail },
     },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const { id } = params;
     const { sub } = getUser(auth);
-    if (!canMessage(sub)) {
+    const trail = await getTrail(id);
+    if (!canMessage(trail.createdBy)) {
         return redirect(`/trail/${id}`);
     }
 
