@@ -25,7 +25,7 @@ function Invite({ id }: InviteProps) {
             <Typography sx={{ padding: "0.5rem", textAlign: "center" }} variant="body1">
                 or scan the code
             </Typography>
-            <QrCode value={joinUrl} />
+            <QrCode level="Q" size={270} includeMargin value={joinUrl} />
         </Stack>
     );
 }
