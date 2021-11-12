@@ -14,6 +14,7 @@ import {
     prepareTrailForUpdate,
 } from "../../../utils";
 import TrailProgress from "../../../components/trailProgress";
+import { sendTrainMessages, clearTrailMessages } from "../../../messagingUtils";
 
 function userCanUpdate(id: string, userTrails: any[]) {
     const userTrailIds = (Object.values(userTrails) as UserTrail[]).map(userTrail => userTrail.id);
@@ -48,12 +49,10 @@ export const loader = (args: any) =>
 
 const updateProgressAction: ActionFunction = async ({
     request,
-    context: {
-        auth,
-        store: { trailsForUser, updateProgress },
-    },
+    context: { auth, store },
     params,
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) => {
+    const { trailsForUser, updateProgress } = store;
     const { id } = params;
     const body = new URLSearchParams(await request.text());
     const updateAction = body.get("action");
@@ -73,8 +72,16 @@ const updateProgressAction: ActionFunction = async ({
         return json(null, { status: 404 });
     }
 
-    const update = (trail: Trail) => {
-        const [canUpdate, preparedTrail] = prepareTrailForUpdate(
+    const sendNextStationMessages = (clearMessages: boolean) => async (trail: Trail) => {
+        if (clearMessages) {
+            await clearTrailMessages();
+        }
+
+        sendTrainMessages(trail, store);
+    };
+
+    const update = async (trail: Trail) => {
+        const [canUpdate, isOverride, preparedTrail] = prepareTrailForUpdate(
             trail,
             updateForStop,
             updateForTime,
@@ -89,7 +96,9 @@ const updateProgressAction: ActionFunction = async ({
         return [
             true,
             {
-                ...(updateAction === "missed" ? moveOnByTrain(preparedTrail) : moveToNextStation(preparedTrail)),
+                ...(updateAction === "missed"
+                    ? await moveOnByTrain(preparedTrail, sendNextStationMessages(isOverride))
+                    : await moveToNextStation(preparedTrail, sendNextStationMessages(isOverride))),
                 progressUpdates: [
                     ...(preparedTrail.progressUpdates || []),
                     {

@@ -1,6 +1,6 @@
 import { Database, ref, set, child, get, remove } from "firebase/database";
 import { v4 as uuid } from "uuid";
-import { Trail, UserTrail, Store, StoreContext } from "./types";
+import { Trail, UserTrail, Store, StoreContext, UserDetails, PhoneNumberVerification } from "./types";
 import { storedTrailToTrail } from "./utils";
 
 export type StoreLoaderArgs = { request: Request; context: StoreContext; params: any };
@@ -77,6 +77,16 @@ export function create(db: Database): Store {
         return true;
     };
 
+    const addPhoneNumberToTrail = async (trailId: string, phoneNumber: string) => {
+        const currentNumbers = Object.values(
+            (await (await get(child(ref(db), `messaging/${trailId}/numbers`))).toJSON()) || {},
+        );
+
+        currentNumbers.push(phoneNumber);
+
+        await set(ref(db, `messaging/${trailId}/numbers`), currentNumbers);
+    };
+
     return {
         setTrail,
         addTrailToUser: (userId: string, trailId: string, trail: UserTrail) =>
@@ -85,5 +95,19 @@ export function create(db: Database): Store {
         trailsForUser: async (userId: string) =>
             ((await get(child(ref(db), `users/${userId}/trails`))).toJSON() || []) as Trail[],
         updateProgress,
+        getUserDetails: async (userId: string) =>
+            ((await get(child(ref(db), `users/${userId}/details`))).toJSON() as UserDetails) || null,
+        setUserDetails: (userId: string, details: UserDetails) => set(ref(db, `users/${userId}/details`), details),
+        getPhoneNumberVerification: async (userId: string) =>
+            ((await get(child(ref(db), `users/${userId}/numberVerification`))).toJSON() as PhoneNumberVerification) ||
+            null,
+        setPhoneNumberVerification: (userId: string, verification: PhoneNumberVerification) =>
+            set(ref(db, `users/${userId}/numberVerification`), verification),
+        removePhoneNumberVerification: (userId: string) => remove(ref(db, `users/${userId}/numberVerification`)),
+        addPhoneNumberToTrail,
+        getPhoneNumbersForTrail: async (trailId: string) =>
+            Object.values(
+                await get(child(ref(db), `messaging/${trailId}/numbers`)).then(snapshot => snapshot.val() || []),
+            ),
     };
 }

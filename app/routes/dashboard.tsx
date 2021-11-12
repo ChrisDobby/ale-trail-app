@@ -2,6 +2,7 @@ import { useLoaderData, Link, json } from "remix";
 import type { MetaFunction } from "remix";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import Alert from "@mui/material/Alert";
 import { AuthenticatedLoaderArgs, getUser, secure } from "../authentication";
 import Header from "../components/header";
 import { tokenCookie } from "../cookies";
@@ -10,6 +11,7 @@ import { StoreLoaderArgs } from "../store";
 import withStore from "../withStore";
 import UserTrails from "../components/userTrails";
 import { UserTrail } from "../types";
+import { hasVerificationExpired } from "../utils";
 
 export const meta: MetaFunction = () => {
     return {
@@ -28,7 +30,7 @@ function isCurrentDateOrAfter(currentDate: Date, trailDateTimeString: string) {
 async function dashboardLoader({
     context: {
         auth,
-        store: { trailsForUser },
+        store: { trailsForUser, getPhoneNumberVerification },
     },
 }: AuthenticatedLoaderArgs & StoreLoaderArgs) {
     const user = getUser(auth);
@@ -46,17 +48,32 @@ async function dashboardLoader({
                 new Date(trail2.meeting.dateTime).getTime() - new Date(trail1.meeting.dateTime).getTime(),
         );
 
-    return json({ user, trails });
+    const phoneNumberVerification = await getPhoneNumberVerification(user.sub);
+
+    return json({
+        user,
+        trails,
+        awaitingVerification:
+            phoneNumberVerification && !hasVerificationExpired(phoneNumberVerification.expires, new Date())
+                ? phoneNumberVerification
+                : null,
+    });
 }
 
 export const loader = (args: any) =>
     secure({ cookie: tokenCookie, getSession, commitSession, args }, withStore(dashboardLoader));
 
 export default function Dashboard() {
-    const { user, trails } = useLoaderData();
+    const { user, trails, awaitingVerification } = useLoaderData();
     return (
         <>
             <Header userProfile={user} />
+            {awaitingVerification && (
+                <Alert variant="filled" severity="warning">
+                    You have not verified your phone number{" "}
+                    <Link to={`/trail/${awaitingVerification.trailId}/phoneNumberVerify`}>verify it now</Link>
+                </Alert>
+            )}
             <UserTrails trails={trails} />
             <Link
                 to="/trail/create"

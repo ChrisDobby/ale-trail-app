@@ -53,8 +53,13 @@ function getNextStop(currentStop?: string) {
     return `stop:${Number(stopNo) + 1}`;
 }
 
-export function moveToNextStation(trail: Trail): Trail {
-    return { ...trail, currentStop: getNextStop(trail.currentStop) };
+export async function moveToNextStation(trail: Trail, onComplete?: (trail: Trail) => Promise<void>): Promise<Trail> {
+    const updatedTrail = { ...trail, currentStop: getNextStop(trail.currentStop) };
+    if (onComplete) {
+        await onComplete(updatedTrail);
+    }
+
+    return updatedTrail;
 }
 
 export function storedTrailToTrail(storedTrail: any): Trail {
@@ -114,7 +119,7 @@ export function getTimeOfNextTrain(
     );
 }
 
-export function moveOnByTrain(trail: Trail): Trail {
+export async function moveOnByTrain(trail: Trail, onComplete?: (trail: Trail) => Promise<void>): Promise<Trail> {
     const currentStation = getCurrentStation(trail);
     if (!currentStation) {
         return trail;
@@ -144,7 +149,12 @@ export function moveOnByTrain(trail: Trail): Trail {
         afterDateTime = timeOfNextTrain.arrive;
     }
 
-    return { ...trail, stops: updatedStops };
+    const updatedTrail = { ...trail, stops: updatedStops };
+    if (onComplete) {
+        await onComplete(updatedTrail);
+    }
+
+    return updatedTrail;
 }
 
 function getPreviousCurrentStop(trail: Trail) {
@@ -176,7 +186,7 @@ export function prepareTrailForUpdate(
     updateForTime: string,
     updateAction: string,
     userId: string,
-): [boolean, Trail] {
+): [boolean, boolean, Trail] {
     const creatorUpdate = trail.createdBy === userId;
     const existingProgressUpdate = trail.progressUpdates?.find(
         update => update.stop === updateForStop && update.time === updateForTime,
@@ -185,12 +195,47 @@ export function prepareTrailForUpdate(
     switch (true) {
         case (!creatorUpdate && existingProgressUpdate) ||
             (creatorUpdate && existingProgressUpdate && existingProgressUpdate.action === updateAction):
-            return [false, trail];
+            return [false, Boolean(existingProgressUpdate), trail];
         case !existingProgressUpdate:
-            return [true, trail];
+            return [true, false, trail];
         case creatorUpdate:
-            return [true, removeProgressUpdate(trail, existingProgressUpdate as ProgressUpdate)];
+            return [true, true, removeProgressUpdate(trail, existingProgressUpdate as ProgressUpdate)];
         default:
-            return [false, trail];
+            return [false, false, trail];
     }
+}
+
+export function getVerificationCode() {
+    return Math.floor(Math.random() * 10000).toString();
+}
+
+export function createPhoneNumberVerification(phoneNumber: string, trailId: string) {
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 1);
+    const verificationCode = getVerificationCode();
+    return {
+        phoneNumber,
+        verificationCode,
+        trailId,
+        expires: expiry.toISOString(),
+    };
+}
+
+export function getMaskedPhoneNumber(phoneNumber: string) {
+    const numberOfAsterisks = phoneNumber.length - 3;
+    return `${Array.from({ length: numberOfAsterisks })
+        .map(() => "*")
+        .join("")}${phoneNumber.substring(phoneNumber.length - 3)}`;
+}
+
+export function hasVerificationExpired(expiryDateTime: string, currentDateTime: Date) {
+    return new Date(expiryDateTime).getTime() < currentDateTime.getTime();
+}
+
+export function internationalPhoneNumber(phoneNumber: string) {
+    return phoneNumber.replace(/^0/, "44");
+}
+
+export function canMessage(userId: string) {
+    return userId === process.env.USER_ID_FOR_MESSAGING;
 }
