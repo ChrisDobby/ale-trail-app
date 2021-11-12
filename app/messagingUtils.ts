@@ -27,7 +27,6 @@ async function sendSMS(phoneNumbers: string[], message: string, scheduledTime?: 
             .join(","),
     );
     form.append("sender", "Ale trail");
-    form.append("test", "true");
     if (scheduledTime) {
         form.append("schedule_time", Math.floor(new Date(scheduledTime).getTime() / 1000));
     }
