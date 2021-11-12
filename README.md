@@ -3,6 +3,8 @@
 
 Turns out we need a planner for our annual ale trail which also gave me a chance to do something with the fantasic [Remix](https://docs.remix.run).
 
+[Ale trail app](https://ale-trail.chrisdobby.dev)
+
 ## Netlify Setup
 
 1. Install the [Netlify CLI](https://www.netlify.com/products/dev/):
