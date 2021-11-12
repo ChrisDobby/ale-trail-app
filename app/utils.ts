@@ -77,7 +77,6 @@ export function getTimeOfNextTrain(
         arrive: new Date(`${datePart}T${arrive}`),
     }));
     const after = new Date(afterDateTime);
-    after.setMinutes(after.getMinutes() + 5);
     const timesAfter = times.filter(time => time.depart > after);
     if (timesAfter.length === 0) {
         return null;
